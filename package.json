@@ -1,0 +1,47 @@
+{
+  "name": "ocrgenerator",
+  "version": "0.0.1",
+  "description": "Swedish invoice no generator",
+  "license": "MIT",
+  "author": {
+    "name": "Zerodep AB",
+    "url": "https://github.com/zerodep"
+  },
+  "main": "main.js",
+  "module": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zerodep/ocrgenerator"
+  },
+  "bugs": {
+    "url": "https://github.com/zerodep/ocrgenerator/issues"
+  },
+  "scripts": {
+    "test": "mocha",
+    "posttest": "eslint . --cache",
+    "prepare": "rollup -c"
+  },
+  "keywords": [
+    "ocr",
+    "referenskontroll",
+    "bankgirot",
+    "sverige",
+    "fakturanummer",
+    "invoice number"
+  ],
+  "devDependencies": {
+    "eslint": "^6.7.2",
+    "esm": "^3.2.25",
+    "mocha": "^6.2.2",
+    "rollup": "^1.27.9",
+    "rollup-plugin-commonjs": "^10.1.0"
+  },
+  "files": [
+    "index.js",
+    "main.js"
+  ],
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {}
+}
