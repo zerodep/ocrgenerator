@@ -19,7 +19,8 @@
   "scripts": {
     "test": "mocha",
     "posttest": "eslint . --cache",
-    "prepare": "rollup -c"
+    "prepare": "rollup -c",
+    "cov:html": "nyc --require esm mocha && nyc report --reporter=html"
   },
   "keywords": [
     "ocr",
