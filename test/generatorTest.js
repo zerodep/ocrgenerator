@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {soft, hard, fixed} from '../index';
+import {soft, hard, fixed, generate, MIN_LENGTH, MAX_LENGTH} from '../index';
 import {mjukkontroll, hardkontroll, fastlangd, langdsiffra} from './bghelpers';
 
 const valids = [
@@ -13,10 +13,12 @@ const valids = [
 ];
 
 const fromString = [
-  ['2019121', '201912193', '0000201912136', '201951'],
+  ['2019121', '201912193', '0000201912136'],
   ['2019-12-07200', '2019120720030', '0002019120720063'],
   ['2019-12-072002376', '20191207200237673', '020191207200237681'],
   ['Customer007:Date2019-12-24:Amount$200', '0072019122420063', '000000072019122420014'],
+  ['1234567890123456789012345', '3456789012345678901234559', '3456789012345678901234559'],
+  ['0', '034', '0000075'],
 ];
 
 describe('generate', () => {
@@ -42,6 +44,8 @@ describe('generate', () => {
         const result = soft(input);
         assert.equal(result, valid);
         assert.equal(mjukkontroll(result), true, valid);
+        assert.ok(result.length >= MIN_LENGTH, `>= ${MIN_LENGTH}`);
+        assert.ok(result.length <= MAX_LENGTH, `<= ${MAX_LENGTH}`);
       });
     });
   });
@@ -68,6 +72,8 @@ describe('generate', () => {
         const result = hard(input);
         assert.equal(hardkontroll(result), true, valid);
         assert.equal(result, valid);
+        assert.ok(result.length >= MIN_LENGTH, `>= ${MIN_LENGTH}`);
+        assert.ok(result.length <= MAX_LENGTH, `<= ${MAX_LENGTH}`);
       });
     });
   });
@@ -86,6 +92,8 @@ describe('generate', () => {
         const input = result.substring(0, result.length - 2);
         assert.equal(hard(input), result, input);
         assert.equal(langdsiffra(result), true);
+        assert.ok(result.length >= MIN_LENGTH, `>= ${MIN_LENGTH}`);
+        assert.ok(result.length <= MAX_LENGTH, `<= ${MAX_LENGTH}`);
       });
     });
 
@@ -94,6 +102,8 @@ describe('generate', () => {
         const result = hard(input);
         assert.equal(langdsiffra(result), true, valid);
         assert.equal(result, valid);
+        assert.ok(result.length >= MIN_LENGTH, `>= ${MIN_LENGTH}`);
+        assert.ok(result.length <= MAX_LENGTH, `<= ${MAX_LENGTH}`);
       });
     });
   });
@@ -133,6 +143,28 @@ describe('generate', () => {
       assert.equal(result, valid);
       assert.equal(result.length, 13, 'expected length');
       assert.equal(fastlangd(result, 13, 13), true, valid);
+    });
+  });
+
+  describe('generate(from)', () => {
+    it('throw TypeError if invalid from', () => {
+      assert.throws(() => generate(), {name: 'TypeError'});
+      assert.throws(() => generate(null), {name: 'TypeError'});
+      assert.throws(() => generate({}), {name: 'TypeError'});
+    });
+
+    it('returns undefined if nothing could be used', () => {
+      assert.equal(generate('abc'), undefined);
+    });
+
+    it('returns something if \'0\'', () => {
+      assert.equal(generate(0), '034');
+      assert.equal(generate('0'), '034');
+    });
+
+    it('returns something if \'-1\'', () => {
+      assert.equal(generate(-1), '133');
+      assert.equal(generate('-1'), '133');
     });
   });
 });

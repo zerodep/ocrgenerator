@@ -4,6 +4,15 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 const MIN_LENGTH = 2;
 const MAX_LENGTH = 25;
+const ERR_OUT_OF_RANGE = 'ERR_OCR_OUT_OF_RANGE';
+const ERR_INVALID_CHAR = 'ERR_OCR_INVALID_CHAR';
+
+function generate(from, {fixedLength} = {}) {
+  if (typeof from === 'number') from = from.toString();
+  else if (typeof from !== 'string') throw new TypeError('input must be a string or number');
+  const result = calculateChecksumWithLength(from, {fixedLength});
+  return result && result.numbers;
+}
 
 function soft(from) {
   return generate(from);
@@ -14,26 +23,24 @@ function hard(from) {
 }
 
 function fixed(from, fixedLength) {
-  return calculateChecksumWithLength(from.toString(), {fixedLength}).numbers;
-}
-
-function generate(from) {
-  return calculateChecksumWithLength(from.toString()).numbers;
+  return generate(from, {fixedLength});
 }
 
 function validate(ocr) {
-  const len = ocr.length;
-  const from = ocr.toString().substring(0, len - 1);
-  const {sum, error_code} = calculateChecksumReversed(from, {validation: true});
-  if (error_code) return {error_code};
+  if (typeof ocr === 'number') ocr = ocr.toString();
+  else if (typeof ocr !== 'string') throw new TypeError('input must be a string or number');
 
-  if (len > MAX_LENGTH) return {error_code: 'ERR_OCR_OUT_OF_RANGE', message: `OCR reference too long must be between ${MIN_LENGTH} and ${MAX_LENGTH}`};
-  if (len < MIN_LENGTH) return {error_code: 'ERR_OCR_OUT_OF_RANGE', message: `OCR reference too short must be between ${MIN_LENGTH} and ${MAX_LENGTH}`};
+  const len = ocr.length;
+  const from = ocr.substring(0, len - 1);
+  const {sum, error_code, message} = calculateChecksumReversed(from, {validation: true});
+  if (error_code) return {error_code, message};
+
+  if (len > MAX_LENGTH) return {error_code: ERR_OUT_OF_RANGE, message: `OCR reference too long must be between ${MIN_LENGTH} and ${MAX_LENGTH}`};
+  if (len < MIN_LENGTH) return {error_code: ERR_OUT_OF_RANGE, message: `OCR reference too short must be between ${MIN_LENGTH} and ${MAX_LENGTH}`};
 
   const control = controlDigit(sum);
   return {valid: control == ocr[len - 1]};
 }
-
 
 function validateSoft(ocr) {
   return !!validate(ocr).valid;
@@ -58,6 +65,7 @@ function validateFixedLength(ocr, length1, length2) {
 
 function calculateChecksumWithLength(from, {fixedLength} = {}) {
   let {sum, length, numbers} = calculateChecksumReversed(from, {fixedLength});
+  if (!length) return;
 
   if (fixedLength) {
     if (length < fixedLength - 1) {
@@ -68,17 +76,17 @@ function calculateChecksumWithLength(from, {fixedLength} = {}) {
     length += 2;
   }
 
-  const lengthCheck = length % 10;
-  numbers += lengthCheck;
+  const lengthControl = length % 10;
+  numbers += lengthControl;
 
-  sum += sumDigits(0, lengthCheck);
+  sum += sumDigits(0, lengthControl);
 
   const res = sum % 10;
 
-  const checksum = res === 0 ? 0 : 10 - res;
-  numbers += checksum;
+  const control = res === 0 ? 0 : 10 - res;
+  numbers += control;
 
-  return {checksum, numbers, length};
+  return {numbers, lengthControl, control, length, sum};
 }
 
 function calculateChecksumReversed(from, {fixedLength, validation} = {}) {
@@ -90,8 +98,12 @@ function calculateChecksumReversed(from, {fixedLength, validation} = {}) {
   for (let i = from.length - 1; i >= 0; --i) {
     const c = Number(from[i]);
     if (isNaN(c)) {
-      if (validation) return {error_code: 'ERR_OCR_CHAR', message: `char detected at ${i}`};
+      if (validation) return {error_code: ERR_INVALID_CHAR, message: `char detected at ${i}`};
       continue;
+    }
+    if (len > MAX_LENGTH - 3) {
+      if (validation) return {error_code: ERR_OUT_OF_RANGE, message: `OCR reference too long must be between ${MIN_LENGTH} and ${MAX_LENGTH}`};
+      break;
     }
     ++pos;
     ++len;
@@ -100,7 +112,6 @@ function calculateChecksumReversed(from, {fixedLength, validation} = {}) {
 
     sum += sumDigits(pos, c);
   }
-
   return {numbers, sum, length: len};
 }
 
@@ -122,6 +133,7 @@ exports.fixed = fixed;
 exports.generate = generate;
 exports.hard = hard;
 exports.soft = soft;
+exports.validate = validate;
 exports.validateFixedLength = validateFixedLength;
 exports.validateHard = validateSoft;
 exports.validateSoft = validateSoft;

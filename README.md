@@ -15,14 +15,14 @@ Swedish banks can take an invoice number that is validated against four algorith
 ## Api
 
 Functions:
-- `generate(from[, fixedLength])`: generate invoice number with length and checksum
+- [`generate(from[, fixedLength])`](#generatefrom-fixedlength): generate invoice number with length and checksum
 - `soft(from)`: same as generate
 - `hard(from)`: same as generate
 - `fixed(from, fixedLength)`: generate with fixed length, padded with preceeding zeros if too short and capped backwards if too long
 - `calculateChecksumReversed(ocr)`: calculate checksum backwards
 - `calculateChecksumWithLength`: calculate checksum and add length control
 - [`validate(ocr)`](#validateocr): validate ocr according to modulus 10
-- `validateSoft(ocr)`: validate checksum
+- `validateSoft(ocr)`: validate checksum, actually validates with modulus 10 and returns false if invalid
 - `validateHard(ocr)`: validate hard, actually the same as soft
 - `validateVariableLength(ocr)`: controls checksum and length control
 - `validateFixedLength(ocr, length1[, length2])`: validate fixed length, takes ocr and one length, and one optional length, either must match
@@ -76,7 +76,7 @@ Returns:
 - `valid`: boolean indicating that the modulus 10 check was successfull
 - `error_code`: occasional error
   - `ERR_OCR_CHAR`: a character has sneeked into ocr
-  - `ERR_OCR_OUT_OF_RANGE`: OCR reference was out of range
+  - `ERR_OCR_OUT_OF_RANGE`: OCR reference was out of range, i.e. < 2 or > 25
 - `message`: occasional error description
 
 ## References

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {validateSoft, validateHard, validateVariableLength, validateFixedLength} from '../index';
+import {validateSoft, validateHard, validateVariableLength, validateFixedLength, validate} from '../index';
 import {mjukkontroll, hardkontroll, fastlangd, langdsiffra} from './bghelpers';
 
 const valids = [
@@ -177,6 +177,40 @@ describe('validate', () => {
       const result = validateFixedLength(tooLong, 2, 3);
       assert.equal(result, fastlangd(tooLong, 2, 3));
       assert.equal(result, false);
+    });
+  });
+
+  describe('validate(ocr)', () => {
+    it('returns valid true if valid', () => {
+      valids.forEach((valid) => {
+        assert.deepEqual(validate(valid), {valid: true});
+      });
+    });
+
+    it('accepts number', () => {
+      assert.deepEqual(validate(1636976), {valid: true});
+    });
+
+    it('returns valid false if invalid control digit', () => {
+      assert.deepEqual(validate('18108401345678779'), {valid: false});
+    });
+
+    it('returns error out of range if too long', () => {
+      assert.equal(validate(Array(26).fill('0').join('')).error_code, 'ERR_OCR_OUT_OF_RANGE');
+    });
+
+    it('returns error out of range if too short', () => {
+      assert.equal(validate('0').error_code, 'ERR_OCR_OUT_OF_RANGE');
+    });
+
+    it('returns error char if sneeky char', () => {
+      assert.equal(validate('0abc3').error_code, 'ERR_OCR_INVALID_CHAR');
+    });
+
+    it('throw TypeError if invalid from', () => {
+      assert.throws(() => validate(), {name: 'TypeError'});
+      assert.throws(() => validate(null), {name: 'TypeError'});
+      assert.throws(() => validate({}), {name: 'TypeError'});
     });
   });
 });
