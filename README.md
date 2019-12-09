@@ -1,6 +1,8 @@
 OCR generator
 =============
 
+[![Build Status](https://travis-ci.org/zerodep/ocrgenerator.svg?branch=master)](https://travis-ci.org/zerodep/ocrgenerator)
+
 Swedish invoice number generator based on modulus 10.
 
 ## Introduction
