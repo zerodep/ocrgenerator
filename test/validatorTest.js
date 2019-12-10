@@ -183,16 +183,31 @@ describe('validate', () => {
   describe('validate(ocr)', () => {
     it('returns valid true if valid', () => {
       valids.forEach((valid) => {
-        assert.deepEqual(validate(valid), {valid: true});
+        const sum = getChecksum(valid);
+        assert.deepEqual(validate(valid), {
+          valid: true,
+          control: Number(valid[valid.length - 1]),
+          sum,
+        });
       });
     });
 
     it('accepts number', () => {
-      assert.deepEqual(validate(1636976), {valid: true});
+      const sum = getChecksum('1636976');
+      assert.deepEqual(validate(1636976), {
+        valid: true,
+        control: 6,
+        sum,
+      });
     });
 
     it('returns valid false if invalid control digit', () => {
-      assert.deepEqual(validate('18108401345678779'), {valid: false});
+      const sum = getChecksum('18108401345678779');
+      assert.deepEqual(validate('18108401345678779'), {
+        valid: false,
+        control: 8,
+        sum,
+      });
     });
 
     it('returns error out of range if too long', () => {
@@ -212,6 +227,32 @@ describe('validate', () => {
       assert.throws(() => validate(null), {name: 'TypeError'});
       assert.throws(() => validate({}), {name: 'TypeError'});
     });
+
+    describe('plusgirot expects length between 5 and 15', () => {
+      it('validates lengths between 5 and 15', () => {
+        assert.equal(validate('072019122420055', {minLength: 5, maxLength: 15}).valid, true);
+        assert.equal(validate('1019080881039', {minLength: 5, maxLength: 15}).valid, true);
+        assert.equal(validate('00059', {minLength: 5, maxLength: 15}).valid, true);
+      });
+
+      it('rejects lengths below 5 and above 15', () => {
+        assert.equal(validate('18108401345678778', {minLength: 5, maxLength: 15}).error_code, 'ERR_OCR_OUT_OF_RANGE');
+        assert.equal(validate('0042', {minLength: 5, maxLength: 15}).error_code, 'ERR_OCR_OUT_OF_RANGE');
+      });
+    });
   });
 });
 
+function getChecksum(numbers) {
+  let sum = 0;
+  let pos = 0;
+  for (let i = numbers.length - 2; i >= 0; --i) {
+    const n = Number(numbers[i]);
+
+    if (pos % 2) sum += n;
+    else sum += n < 5 ? n * 2 : n * 2 - 9;
+
+    ++pos;
+  }
+  return sum;
+}

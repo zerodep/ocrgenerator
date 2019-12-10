@@ -17,13 +17,12 @@ Swedish banks can take an invoice number that is validated against four algorith
 ## Api
 
 Functions:
-- [`generate(from[, fixedLength])`](#generatefrom-fixedlength): generate invoice number with length and checksum
-- `soft(from)`: same as generate
-- `hard(from)`: same as generate
-- `fixed(from, fixedLength)`: generate with fixed length, padded with preceeding zeros if too short and capped backwards if too long
-- `calculateChecksumReversed(ocr)`: calculate checksum backwards
-- `calculateChecksumWithLength`: calculate checksum and add length control
-- [`validate(ocr)`](#validateocr): validate ocr according to modulus 10
+- [`generate(from[, options])`](#generatefrom-options): generate invoice number with length control and checksum digits
+- `soft(from)`: same as generate without options
+- `hard(from)`: same as generate without options
+- `fixed(from, fixedLength)`: generate with fixed length, padded with preceeding zeros if too short and capped from left if too long
+- `calculateChecksumReversed(ocr[, options])`: calculate checksum from left
+- [`validate(ocr[, options])`](#validateocr-options): validate ocr according to modulus 10
 - `validateSoft(ocr)`: validate checksum, actually validates with modulus 10 and returns false if invalid
 - `validateHard(ocr)`: validate hard, actually the same as soft
 - `validateVariableLength(ocr)`: controls checksum and length control
@@ -33,22 +32,37 @@ Properties:
 - `MIN_LENGTH`: 2
 - `MAX_LENGTH`: 25
 
-## generate(from[, fixedLength])
+The above tresholds - `MIN_LENGTH` and `MAX_LENGTH` - is the expected invoice number length range for bankgirot, for plusgirot it is 5 and 15.
+
+## generate(from[, options])
 
 Generate invoice number with length control and checksum.
 
+Arguments:
 - `from`: any given string, e.g. customer number + date + amount
-- `fixedLength`: optional fixed length, must be between 2 and 25
+- `options`: optional options
+  - `minLength`: defaults to `MIN_LENGTH`
+  - `maxLength`: defaults to `MAX_LENGTH`
+
+Returns:
+- `numbers`: the actual generated invoice number
+- `lengthControl`: length control digit
+- `control`: control digit
+- `length`: length
+- `sum`: checksum
+- `error_code`: occasional error
+  - `ERR_OCR_OUT_OF_RANGE`: OCR reference length was out of range, i.e. < `minLength` or > `maxLength`
+- `message`: occasional error message
 
 Example:
 ```js
 import {generate} from 'ocrgenerator';
 
 const invoiceNo = generate('Customer007:Date2019-12-24:Amount$200');
-console.log(invoiceNo); // 0072019122420063
+console.log(invoiceNo); // {numbers: '0072019122420063'}
 ```
 
-Modulus 10 reversed, meaning that the last digit is considered at an uneven position, ergo multiply by 1:
+Modulus 10 reversed:
 ```
 Customer007:Date2019-12-24:Amount$200
         007     2019 12 24        200 l = 16 % 10 = 6
@@ -70,16 +84,24 @@ reference control digit: `c = 10 - sum % 10 = 10 - 37 % 10 = 10 - 7 = 3`
 
 Invoice number: `'00720191224200' + l + c = '0072019122420063'`
 
-## validate(ocr)
+## validate(ocr[, options])
 
-Validate ocr according to modulus 10 and return object describing what went wrong.
+Validate ocr according to modulus 10 and return object describing what went wrong if invalid.
+
+Arguments:
+- `ocr`: invoice number
+- `options`: optional options
+  - `minLength`: defaults to `MIN_LENGTH`
+  - `maxLength`: defaults to `MAX_LENGTH`
 
 Returns:
 - `valid`: boolean indicating that the modulus 10 check was successfull
+- `sum`: checksum
+- `control`: expected control digit
 - `error_code`: occasional error
   - `ERR_OCR_CHAR`: a character has sneeked into ocr
   - `ERR_OCR_OUT_OF_RANGE`: OCR reference was out of range, i.e. < 2 or > 25
-- `message`: occasional error description
+- `message`: occasional error message
 
 ## References
 

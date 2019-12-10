@@ -137,7 +137,7 @@ describe('generate', () => {
       });
     });
 
-    it('input longer than fixed length is capped backwards', () => {
+    it('input longer than fixed length is capped from left', () => {
       const result = fixed('Customer007:Date2019-12-24:Amount$200', 13);
       const valid = '2019122420035';
       assert.equal(result, valid);
@@ -146,25 +146,91 @@ describe('generate', () => {
     });
   });
 
-  describe('generate(from)', () => {
-    it('throw TypeError if invalid from', () => {
+  describe('generate(from, {minLength, maxLength})', () => {
+    it('throws TypeError if invalid from', () => {
       assert.throws(() => generate(), {name: 'TypeError'});
       assert.throws(() => generate(null), {name: 'TypeError'});
       assert.throws(() => generate({}), {name: 'TypeError'});
     });
 
-    it('returns undefined if nothing could be used', () => {
-      assert.equal(generate('abc'), undefined);
+    it('throws TypeError if minLength is above maxLength', () => {
+      assert.throws(() => generate('00', {minLength: 3, maxLength: 2}), {name: 'TypeError'});
+    });
+
+    it('throws TypeError if maxLength is below 2', () => {
+      assert.throws(() => generate('00', {maxLength: 1}), {name: 'TypeError'});
+    });
+
+    it('returns 26 if \'\'', () => {
+      assert.equal(generate('').numbers, '26');
+    });
+
+    it('returns 26 if nothing could be used', () => {
+      assert.equal(generate('abc').numbers, '26');
+    });
+
+    it('pads with zeros if nothing could be used and minLength is above 2', () => {
+      assert.equal(generate('abc', {minLength: 3}).numbers, '034');
     });
 
     it('returns something if \'0\'', () => {
-      assert.equal(generate(0), '034');
-      assert.equal(generate('0'), '034');
+      assert.equal(generate(0).numbers, '034');
+      assert.equal(generate('0').numbers, '034');
     });
 
     it('returns something if \'-1\'', () => {
-      assert.equal(generate(-1), '133');
-      assert.equal(generate('-1'), '133');
+      assert.equal(generate(-1).numbers, '133');
+      assert.equal(generate('-1').numbers, '133');
+    });
+
+    it('pads with zeros upto minLength', () => {
+      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {minLength: 17});
+      assert.equal(numbers, '00072019122420071');
+      assert.equal(numbers.length, 17, 'expected length');
+    });
+
+    it('fixedLength takes lesser minLength', () => {
+      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {fixedLength: 17, minLength: 13});
+      assert.equal(numbers, '00072019122420071');
+      assert.equal(numbers.length, 17, 'expected length');
+    });
+
+    it('fixedLength overrides greater minLength', () => {
+      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {fixedLength: 13, minLength: 17});
+      assert.equal(numbers, '2019122420035');
+      assert.equal(numbers.length, 13, 'expected length');
+    });
+
+    it('minLength = maxLength acts as fixedLength', () => {
+      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {minLength: 13, maxLength: 13});
+      assert.equal(numbers, '2019122420035');
+      assert.equal(numbers.length, 13, 'expected length');
+    });
+
+    it('caps from left to maxLength', () => {
+      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {maxLength: 13});
+      assert.equal(numbers, '2019122420035');
+      assert.equal(numbers.length, 13, 'expected length');
+    });
+
+    it('lesser maxLength overrides fixedLength', () => {
+      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {fixedLength: 17, maxLength: 13});
+      assert.equal(numbers, '2019122420035');
+      assert.equal(numbers.length, 13, 'expected length');
+    });
+
+    describe('plusgirot expects length between 5 and 15', () => {
+      it('maxLength = 15', () => {
+        const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {minLength: 5, maxLength: 15});
+        assert.equal(numbers, '072019122420055');
+        assert.equal(numbers.length, 15, 'expected length');
+      });
+
+      it('minLength = 5', () => {
+        const {numbers} = generate('0', {minLength: 5, maxLength: 15});
+        assert.equal(numbers, '00059');
+        assert.equal(numbers.length, 5, 'expected length');
+      });
     });
   });
 });
