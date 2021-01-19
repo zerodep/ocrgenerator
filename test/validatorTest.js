@@ -120,8 +120,11 @@ describe('validate', () => {
     });
 
     it('returns true if valid total length matches one of length argument', () => {
-      const result = validateFixedLength(validChecksumOnly, 7, 8);
+      let result = validateFixedLength(validChecksumOnly, 7, 8);
       assert.equal(result, fastlangd(validChecksumOnly, 7, 8));
+      assert.equal(result, true);
+
+      result = validateFixedLength(validChecksumOnly, 8, 7);
       assert.equal(result, true);
     });
 

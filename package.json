@@ -1,6 +1,6 @@
 {
   "name": "ocrgenerator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Swedish invoice no generator",
   "license": "MIT",
   "author": {
@@ -20,21 +20,31 @@
     "test": "mocha",
     "posttest": "eslint . --cache",
     "prepare": "rollup -c",
-    "cov:html": "nyc --require esm mocha && nyc report --reporter=html"
+    "cov:html": "nyc mocha -R dot && nyc report --reporter=html",
+    "test:lcov": "nyc mocha -R dot && nyc report --reporter lcov && npm run posttest"
   },
   "keywords": [
-    "ocr",
-    "referenskontroll",
     "bankgirot",
-    "sverige",
     "fakturanummer",
-    "invoice number"
+    "generator",
+    "invoice number",
+    "luhn",
+    "modulo 10",
+    "ocr",
+    "plusgirot",
+    "referenskontroll",
+    "referensnr",
+    "sverige",
+    "validator"
   ],
   "devDependencies": {
-    "eslint": "^6.7.2",
-    "esm": "^3.2.25",
-    "mocha": "^6.2.2",
-    "rollup": "^1.27.9",
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/register": "^7.12.10",
+    "eslint": "^7.18.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0",
+    "rollup": "^2.36.2",
     "rollup-plugin-commonjs": "^10.1.0"
   },
   "files": [

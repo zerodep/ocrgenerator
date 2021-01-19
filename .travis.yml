@@ -1,6 +1,10 @@
 language: node_js
 node_js:
-  - 10
-  - 12
-  - 13
-sudo: false
+- '12'
+- '14'
+- '15'
+before_script:
+  - npm install coveralls
+script: npm run test:lcov
+after_success:
+- cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose
