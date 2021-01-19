@@ -1,7 +1,7 @@
 OCR generator
 =============
 
-[![Build Status](https://travis-ci.org/zerodep/ocrgenerator.svg?branch=master)](https://travis-ci.org/zerodep/ocrgenerator)
+[![Build Status](https://travis-ci.com/zerodep/ocrgenerator.svg?branch=master)](https://travis-ci.com/zerodep/ocrgenerator)[![Coverage Status](https://coveralls.io/repos/github/zerodep/ocrgenerator/badge.svg?branch=master)](https://coveralls.io/github/zerodep/ocrgenerator?branch=master)
 
 Swedish invoice number generator based on modulus 10.
 
@@ -21,7 +21,7 @@ Functions:
 - `soft(from)`: same as generate without options
 - `hard(from)`: same as generate without options
 - `fixed(from, fixedLength)`: generate with fixed length, padded with preceeding zeros if too short and capped from left if too long
-- `calculateChecksumReversed(ocr[, options])`: calculate checksum from left
+- `calculateChecksumReversed(ocr[, options])`: calculate checksum from right
 - [`validate(ocr[, options])`](#validateocr-options): validate ocr according to modulus 10
 - `validateSoft(ocr)`: validate checksum, actually validates with modulus 10 and returns false if invalid
 - `validateHard(ocr)`: validate hard, actually the same as soft
