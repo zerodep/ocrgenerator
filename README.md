@@ -1,7 +1,7 @@
 OCR generator
 =============
 
-[![Build Status](https://travis-ci.com/zerodep/ocrgenerator.svg?branch=master)](https://travis-ci.com/zerodep/ocrgenerator)[![Coverage Status](https://coveralls.io/repos/github/zerodep/ocrgenerator/badge.svg?branch=master)](https://coveralls.io/github/zerodep/ocrgenerator?branch=master)
+[![Build](https://github.com/zerodep/ocrgenerator/actions/workflows/build.yaml/badge.svg)](https://github.com/zerodep/ocrgenerator/actions/workflows/build.yaml)[![Coverage Status](https://coveralls.io/repos/github/zerodep/ocrgenerator/badge.svg?branch=master)](https://coveralls.io/github/zerodep/ocrgenerator?branch=master)
 
 Swedish invoice number generator based on modulus 10.
 
