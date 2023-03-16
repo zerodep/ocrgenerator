@@ -11,7 +11,7 @@ Swedish banks can take an invoice number that is validated against four algorith
 
 - *soft algorithm*: invalid control digit is accepted
 - *hard algorithm*: invalid control digit is unacceptable
-- *variable length algorithm*: invalid control digit is unacceptable and second to last digit is the length control digit and must match total length % 10 of invoice number. The length control digit is also included in the modulus 10 calculation, that was painfully experienced.
+- *variable length algorithm*: invalid control digit is unacceptable and second to last digit is the length control digit and must match total length % 10 of invoice number. The length control digit is also included in the modulus 10 calculation
 - *fixed length algorithm*: up to two lengths are agreed with the bank and must be matched by the invoice number and an invalid control digit is unacceptable
 
 ## Api
