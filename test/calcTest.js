@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {calculateChecksumReversed} from '../index';
+import {calculateChecksumReversed} from '../index.js';
 
 describe('calculate', () => {
   describe('calculateChecksumReversed(from[, fixedLength])', () => {

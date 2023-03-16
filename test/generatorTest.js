@@ -1,6 +1,6 @@
 import assert from 'assert';
-import {soft, hard, fixed, generate, MIN_LENGTH, MAX_LENGTH} from '../index';
-import {mjukkontroll, hardkontroll, fastlangd, langdsiffra} from './bghelpers';
+import {soft, hard, fixed, generate, MIN_LENGTH, MAX_LENGTH} from '../index.js';
+import {mjukkontroll, hardkontroll, fastlangd, langdsiffra} from './bghelpers.js';
 
 const valids = [
   '18108401345678778',

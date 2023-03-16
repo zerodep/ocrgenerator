@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 const MIN_LENGTH = 2;
 const MAX_LENGTH = 25;
 const ERR_OUT_OF_RANGE = 'ERR_OCR_OUT_OF_RANGE';
