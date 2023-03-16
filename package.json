@@ -1,14 +1,21 @@
 {
   "name": "ocrgenerator",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "Swedish invoice no generator",
   "license": "MIT",
   "author": {
     "name": "Zerodep AB",
     "url": "https://github.com/zerodep"
   },
+  "type": "module",
   "main": "main.js",
   "module": "index.js",
+  "typings": "index.d.ts",
+  "exports": {
+    "import": "./index.mjs",
+    "require": "./main.js"
+  },
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git://github.com/zerodep/ocrgenerator"
@@ -18,10 +25,12 @@
   },
   "scripts": {
     "test": "mocha",
-    "posttest": "eslint . --cache",
-    "prepare": "rollup -c",
-    "cov:html": "nyc mocha -R dot && nyc report --reporter=html",
-    "test:lcov": "nyc mocha -R dot && nyc report --reporter lcov && npm run posttest"
+    "posttest": "npm run lint && npm run dist",
+    "lint": "eslint . --cache",
+    "dist": "rollup -c",
+    "prepack": "npm run dist",
+    "cov:html": "c8 -r html -r text mocha",
+    "test:lcov": "c8 -r lcov mocha && npm run lint"
   },
   "keywords": [
     "bankgirot",
@@ -38,21 +47,20 @@
     "validator"
   ],
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/register": "^7.12.10",
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "eslint": "^7.18.0",
-    "mocha": "^8.2.1",
-    "nyc": "^15.1.0",
-    "rollup": "^2.36.2"
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "eslint": "^8.36.0",
+    "mocha": "^10.2.0",
+    "rollup": "^3.19.1"
   },
   "files": [
     "index.js",
+    "index.d.ts",
     "main.js"
   ],
   "directories": {
     "test": "test"
   },
-  "dependencies": {}
+  "dependencies": {
+    "c8": "^7.13.0"
+  }
 }
