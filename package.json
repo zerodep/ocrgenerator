@@ -1,6 +1,6 @@
 {
   "name": "ocrgenerator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Swedish invoice no generator",
   "license": "MIT",
   "author": {
@@ -8,12 +8,12 @@
     "url": "https://github.com/zerodep"
   },
   "type": "module",
-  "main": "main.js",
+  "main": "main.cjs",
   "module": "index.js",
   "typings": "index.d.ts",
   "exports": {
-    "import": "./index.mjs",
-    "require": "./main.js"
+    "import": "./index.js",
+    "require": "./main.cjs"
   },
   "sideEffects": false,
   "repository": {

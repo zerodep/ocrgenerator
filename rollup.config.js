@@ -9,7 +9,7 @@ export default {
   ],
   output: [
     {
-      file: 'main.js',
+      file: 'main.cjs',
       format: 'cjs',
     }
   ]
