@@ -56,7 +56,7 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "main.js"
+    "main.cjs"
   ],
   "directories": {
     "test": "test"
