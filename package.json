@@ -1,6 +1,6 @@
 {
   "name": "ocrgenerator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Swedish invoice no generator",
   "license": "MIT",
   "author": {
@@ -10,7 +10,7 @@
   "type": "module",
   "main": "main.cjs",
   "module": "index.js",
-  "typings": "index.d.ts",
+  "types": "index.d.ts",
   "exports": {
     "import": "./index.js",
     "require": "./main.cjs"
@@ -25,9 +25,10 @@
   },
   "scripts": {
     "test": "mocha",
-    "posttest": "npm run lint && npm run dist",
+    "posttest": "npm run lint && npm run dist && npm run tsd",
     "lint": "eslint . --cache",
     "dist": "rollup -c",
+    "tsd": "tsd",
     "prepack": "npm run dist",
     "cov:html": "c8 -r html -r text mocha",
     "test:lcov": "c8 -r lcov mocha && npm run lint"
@@ -49,9 +50,10 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
     "c8": "^7.13.0",
-    "eslint": "^8.36.0",
+    "eslint": "^8.37.0",
     "mocha": "^10.2.0",
-    "rollup": "^3.19.1"
+    "rollup": "^3.20.2",
+    "tsd": "^0.28.1"
   },
   "files": [
     "index.js",

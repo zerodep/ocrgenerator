@@ -23,8 +23,8 @@ Functions:
 - `fixed(from, fixedLength)`: generate with fixed length, padded with preceeding zeros if too short and capped from left if too long
 - `calculateChecksumReversed(ocr[, options])`: calculate checksum from right
 - [`validate(ocr[, options])`](#validateocr-options): validate ocr according to modulus 10
-- `validateSoft(ocr)`: validate checksum, actually validates with modulus 10 and returns false if invalid
-- `validateHard(ocr)`: validate hard, actually the same as soft
+- `validateHard(ocr)`: validate against hard algorithm, invalid control digit is unacceptable
+- `validateSoft(ocr)`: same as validateHard, invalid control digit is unacceptable, i.e. a falsy result is accepted
 - `validateVariableLength(ocr)`: controls checksum and length control
 - `validateFixedLength(ocr, length1[, length2])`: validate fixed length, takes ocr and one length, and one optional length, either must match
 
@@ -99,7 +99,7 @@ Returns:
 - `sum`: checksum
 - `control`: expected control digit
 - `error_code`: occasional error
-  - `ERR_OCR_CHAR`: a character has sneeked into ocr
+  - `ERR_OCR_INVALID_CHAR`: a character has sneeked into ocr
   - `ERR_OCR_OUT_OF_RANGE`: OCR reference was out of range, i.e. < 2 or > 25
 - `message`: occasional error message
 

@@ -1,49 +1,153 @@
 declare type from = string | number;
 
 interface LengthOptions {
+  /** Minimum length */
   minLength?: number;
+  /** Maximum length */
   maxLength?: number;
 }
 
 interface FixedOptions extends LengthOptions {
+  /** Fixed length */
   fixedLength?: number;
 }
 
-interface AllOptions extends FixedOptions {
-  validation?: boolean | number;
+interface CalculateOptions extends FixedOptions {
+  /**
+   * Validation in progress
+   * - true will disregard control digit when calculating checksum
+   */
+  validation?: boolean;
 }
 
-type Result = {
+/**
+ * @enum {string}
+ * Validation error codes
+ */
+export const enum ErrorCode {
+  /**
+   * OCR reference length is out of range
+   */
+  OutOfRange = 'ERR_OCR_OUT_OF_RANGE',
+  /**
+   * A character has sneeked into ocr
+   */
+  InvalidChar = 'ERR_OCR_INVALID_CHAR',
+}
+
+export interface ChecksumResult {
+  /** Reference number */
   numbers: string,
+  /** Reversed checksum  */
   sum: number,
+  /** Reference number length, including control digit */
   length: number,
 }
 
-type GenerateResult = {
-  lengthControl: number,
-  control: number,
-};
+export interface GenerateResult extends ChecksumResult {
+  /** Length control digit */
+  lengthControl: number;
+  /** Control digit */
+  control: number;
+}
 
-type ValidateResult = {
-  control: number,
-  sum: number,
-  error_code?: string,
-  message?: string,
-};
+export interface ChecksumResult {
+  /** Control digit */
+  control: number;
+  /** Reversed checksum */
+  sum: number;
+  /** Occasional error code */
+  error_code?: ErrorCode;
+  /** Error message associated with error code */
+  message?: string;
+}
 
-export const MIN_LENGTH: 2;
-export const MAX_LENGTH: 25;
+export interface ValidateResult extends ChecksumResult {
+  /** Is valid reference number */
+  valid: boolean,
+}
 
-export const ERR_OUT_OF_RANGE: 'ERR_OCR_OUT_OF_RANGE';
-export const ERR_INVALID_CHAR: 'ERR_OCR_INVALID_CHAR';
+export const MIN_LENGTH = 2;
+export const MAX_LENGTH = 25;
 
-export function generate(from: from, options?: FixedOptions): Result & GenerateResult;
+/**
+ * Generate invoice number with length control and checksum.
+ * @param {string | number} from Generate from input
+ * @param {object} [options] Generate options
+ */
+export function generate(from: from, options?: FixedOptions): GenerateResult;
+/**
+ * Same as generate without options
+ * @param from
+ *
+ * @returns {string} Reference number
+ */
 export function soft(from: from): string;
+
+/**
+ * Same as generate without options
+ * @param from Generate from input
+ *
+ * @returns {string} Reference number
+ */
 export function hard(from: from): string;
+
+/**
+ * Generate with fixed length
+ * Padded with preceeding zeros if too short and capped from left if too long
+ * @param from Generate from input
+ * @param fixedLength OCR reference number length
+ * @returns {string} Reference number
+ */
 export function fixed(from: from, fixedLength: number): string;
-export function validate(ocr: from, options?: LengthOptions): { valid: boolean } & ValidateResult;
-export function validateFixedLength(ocr: from, length1: number, length2: number): boolean;
+
+/**
+ * Validate OCR reference number
+ * @param {string | number} ocr OCR reference number
+ * @param {object} [options] Validate options
+ * @returns {object} Validation result
+ */
+export function validate(ocr: from, options?: LengthOptions): ValidateResult;
+
+/**
+ * Validate against fixed length algorithm
+ * - Invalid control digit is unacceptable
+ * - Invalid length control digit is unacceptable
+ * @param ocr OCR reference number
+ * @param {number} length1 Check length
+ * @param {number} [length2] Optional alternative length
+ * @returns {boolean} Control digit and length control are valid
+ */
+export function validateFixedLength(ocr: from, length1: number, length2?: number): boolean;
+
+/**
+ * Validate against variable length algorithm
+ * - Invalid control digit is unacceptable
+ * - Invalid length control digit is unacceptable
+ * @param ocr OCR reference number
+ * @returns {boolean} Control digit and length control are valid
+ */
 export function validateVariableLength(ocr: from): boolean;
+
+/**
+ * Validate against hard algorithm
+ * - Invalid control digit is unacceptable
+ * @param ocr OCR reference number
+ * @returns {boolean} Control digit is valid
+*/
+export function validateHard(ocr: from): boolean;
+
+/**
+ * Validate against soft algorithm
+ * - Invalid control digit is accepted
+ * @param ocr OCR reference number
+ * @returns {boolean} Control digit is valid
+*/
 export function validateSoft(ocr: from): boolean;
-export function calculateChecksumReversed(from: from, options?: AllOptions): ValidateResult;
-export { validateSoft as validateHard };
+
+/**
+ * Calculate checksum
+ * @param from Input
+ * @param {object} [options] Optional calculate options
+ */
+export function calculateChecksumReversed(from: from, options?: CalculateOptions): ChecksumResult;
