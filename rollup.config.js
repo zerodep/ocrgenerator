@@ -11,6 +11,11 @@ export default {
     {
       file: 'main.cjs',
       format: 'cjs',
-    }
+    },
+    {
+      file: 'ocrgenerator.cjs',
+      name: 'ocrgenerator',
+      format: 'umd',
+    },
   ]
 };

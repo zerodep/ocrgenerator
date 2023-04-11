@@ -1,6 +1,6 @@
 {
   "name": "ocrgenerator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Swedish invoice no generator",
   "license": "MIT",
   "author": {
@@ -10,11 +10,8 @@
   "type": "module",
   "main": "main.cjs",
   "module": "index.js",
+  "browser": "ocrgenerator.cjs",
   "types": "index.d.ts",
-  "exports": {
-    "import": "./index.js",
-    "require": "./main.cjs"
-  },
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -50,7 +47,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",
     "c8": "^7.13.0",
-    "eslint": "^8.37.0",
+    "eslint": "^8.38.0",
     "mocha": "^10.2.0",
     "rollup": "^3.20.2",
     "tsd": "^0.28.1"
@@ -58,7 +55,8 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "main.cjs"
+    "main.cjs",
+    "ocrgenerator.cjs"
   ],
   "directories": {
     "test": "test"

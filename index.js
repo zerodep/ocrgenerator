@@ -1,24 +1,9 @@
-const MIN_LENGTH = 2;
-const MAX_LENGTH = 25;
+export const MIN_LENGTH = 2;
+export const MAX_LENGTH = 25;
 const ERR_OUT_OF_RANGE = 'ERR_OCR_OUT_OF_RANGE';
 const ERR_INVALID_CHAR = 'ERR_OCR_INVALID_CHAR';
 
-export {
-  MIN_LENGTH,
-  MAX_LENGTH,
-  calculateChecksumReversed,
-  fixed,
-  generate,
-  hard,
-  soft,
-  validate,
-  validateFixedLength,
-  validateVariableLength,
-  validateSoft,
-  validateSoft as validateHard,
-};
-
-function generate(from, {fixedLength, minLength = MIN_LENGTH, maxLength = MAX_LENGTH} = {}) {
+export function generate(from, {fixedLength, minLength = MIN_LENGTH, maxLength = MAX_LENGTH} = {}) {
   if (typeof from === 'number') from = from.toString();
   else if (typeof from !== 'string') throw new TypeError('input must be a string or number');
 
@@ -51,19 +36,19 @@ function generate(from, {fixedLength, minLength = MIN_LENGTH, maxLength = MAX_LE
   }
 }
 
-function soft(from) {
+export function soft(from) {
   return generate(from).numbers;
 }
 
-function hard(from) {
+export function hard(from) {
   return generate(from).numbers;
 }
 
-function fixed(from, fixedLength) {
+export function fixed(from, fixedLength) {
   return generate(from, {fixedLength}).numbers;
 }
 
-function validate(ocr, {minLength = MIN_LENGTH, maxLength = MAX_LENGTH} = {}) {
+export function validate(ocr, {minLength = MIN_LENGTH, maxLength = MAX_LENGTH} = {}) {
   if (typeof ocr === 'number') ocr = ocr.toString();
   else if (typeof ocr !== 'string') throw new TypeError('input must be a string or number');
 
@@ -79,16 +64,20 @@ function validate(ocr, {minLength = MIN_LENGTH, maxLength = MAX_LENGTH} = {}) {
   return {valid: control == ocr[len - 1], control, sum};
 }
 
-function validateSoft(ocr) {
+export function validateSoft(ocr) {
   return !!validate(ocr).valid;
 }
 
-function validateVariableLength(ocr) {
+export function validateHard(ocr) {
+  return !!validate(ocr).valid;
+}
+
+export function validateVariableLength(ocr) {
   if (!validate(ocr).valid) return false;
   return (ocr.length % 10) == ocr[ocr.length - 2];
 }
 
-function validateFixedLength(ocr, length1, length2) {
+export function validateFixedLength(ocr, length1, length2) {
   if (length1 < MIN_LENGTH || length1 > MAX_LENGTH) return false;
   length2 = length2 || length1;
   if (length2 < MIN_LENGTH || length2 > MAX_LENGTH) return false;
@@ -100,7 +89,7 @@ function validateFixedLength(ocr, length1, length2) {
   return (len === length1 || len === length2);
 }
 
-function calculateChecksumReversed(from, {fixedLength, maxLength = MAX_LENGTH, validation} = {}) {
+export function calculateChecksumReversed(from, {fixedLength, maxLength = MAX_LENGTH, validation} = {}) {
   let sum = 0;
   let numbers = '';
   let length = 0;

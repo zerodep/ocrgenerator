@@ -70,6 +70,10 @@ function validateSoft(ocr) {
   return !!validate(ocr).valid;
 }
 
+function validateHard(ocr) {
+  return !!validate(ocr).valid;
+}
+
 function validateVariableLength(ocr) {
   if (!validate(ocr).valid) return false;
   return (ocr.length % 10) == ocr[ocr.length - 2];
@@ -132,6 +136,6 @@ exports.hard = hard;
 exports.soft = soft;
 exports.validate = validate;
 exports.validateFixedLength = validateFixedLength;
-exports.validateHard = validateSoft;
+exports.validateHard = validateHard;
 exports.validateSoft = validateSoft;
 exports.validateVariableLength = validateVariableLength;
