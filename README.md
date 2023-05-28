@@ -75,7 +75,7 @@ sum     005     2009 14 28        200 3 = 37
 ```
 
 The length is the expected total number of digits in the invoice number, i.e. add one for length control and one for control digit.
-total invoic number length: `n = 14 + 1 + 1 = 16`
+total invoice number length: `n = 14 + 1 + 1 = 16`
 length control: `l = n % 10 = 6`
 
 Since the algoritm is in reversed, the length control is at first position - index 0, so times 2:

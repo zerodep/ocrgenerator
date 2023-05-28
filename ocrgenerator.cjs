@@ -19,9 +19,11 @@
     length += 2;
 
     if (fixedLength && fixedLength <= maxLength) {
-      pad(fixedLength);
+      numbers = pad(numbers, length, fixedLength);
+      length = fixedLength;
     } else if (length < minLength) {
-      pad(minLength);
+      numbers = pad(numbers, length, minLength);
+      length = minLength;
     }
 
     const lengthControl = length % 10;
@@ -33,13 +35,6 @@
     numbers += control;
 
     return {numbers, lengthControl, control, length, sum};
-
-    function pad(uptoLength) {
-      if (length < uptoLength) {
-        numbers = Array(uptoLength - length).fill('0').join('') + numbers;
-        length = uptoLength;
-      }
-    }
   }
 
   function soft(from) {
@@ -129,6 +124,13 @@
   function controlDigit(sum) {
     const digit = sum % 10;
     return digit ? 10 - digit : 0;
+  }
+
+  function pad(str, fromLength, uptoLength) {
+    if (fromLength < uptoLength) {
+      str = Array(uptoLength - fromLength).fill('0').join('') + str;
+    }
+    return str;
   }
 
   exports.MAX_LENGTH = MAX_LENGTH;
