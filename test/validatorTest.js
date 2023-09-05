@@ -29,6 +29,11 @@ describe('validate', () => {
       assert.equal(result, true);
     });
 
+    it('returns true if a valid number is passed', () => {
+      const result = validateVariableLength(1202951008);
+      assert.equal(result, true);
+    });
+
     it('returns true if just 2 zeros', () => {
       const result = validateSoft('00');
       assert.equal(result, mjukkontroll('00'));
@@ -61,6 +66,11 @@ describe('validate', () => {
       assert.equal(result, true);
     });
 
+    it('returns true if a valid number is passed', () => {
+      const result = validateVariableLength(1202951008);
+      assert.equal(result, true);
+    });
+
     it('returns true if just 2 zeros', () => {
       const result = validateHard('00');
       assert.equal(result, hardkontroll('00'));
@@ -85,6 +95,11 @@ describe('validate', () => {
       it(`valid ${valid} returns true`, () => {
         assert.equal(validateVariableLength(valid), langdsiffra(valid));
       });
+    });
+
+    it('returns true if a valid number is passed', () => {
+      const result = validateVariableLength(1202951008);
+      assert.equal(result, true);
     });
 
     it('returns false if invalid length control', () => {
@@ -147,6 +162,11 @@ describe('validate', () => {
     it('returns true if just 2 zeros', () => {
       const result = validateFixedLength('00', 2, 3);
       assert.equal(result, fastlangd('00', 2, 3));
+      assert.equal(result, true);
+    });
+
+    it('returns true if a valid number is passed', () => {
+      const result = validateFixedLength(1636976, 7);
       assert.equal(result, true);
     });
 

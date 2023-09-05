@@ -70,11 +70,14 @@ function validateHard(ocr) {
 }
 
 function validateVariableLength(ocr) {
+  if (typeof ocr === 'number') ocr = ocr.toString();
   if (!validate(ocr).valid) return false;
-  return (ocr.length % 10) == ocr[ocr.length - 2];
+  const len = ocr.length;
+  return (len % 10) == ocr[len - 2];
 }
 
 function validateFixedLength(ocr, length1, length2) {
+  if (typeof ocr === 'number') ocr = ocr.toString();
   if (length1 < MIN_LENGTH || length1 > MAX_LENGTH) return false;
   length2 = length2 || length1;
   if (length2 < MIN_LENGTH || length2 > MAX_LENGTH) return false;
