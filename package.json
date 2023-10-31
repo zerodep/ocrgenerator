@@ -45,11 +45,11 @@
     "validator"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "c8": "^8.0.1",
-    "eslint": "^8.48.0",
+    "eslint": "^8.52.0",
     "mocha": "^10.2.0",
-    "rollup": "^3.28.1",
+    "rollup": "^3.29.4",
     "tsd": "^0.29.0"
   },
   "files": [
