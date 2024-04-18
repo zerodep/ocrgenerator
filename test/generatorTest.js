@@ -1,16 +1,8 @@
 import assert from 'assert';
-import {soft, hard, fixed, generate, MIN_LENGTH, MAX_LENGTH} from '../index.js';
-import {mjukkontroll, hardkontroll, fastlangd, langdsiffra} from './bghelpers.js';
+import { soft, hard, fixed, generate, MIN_LENGTH, MAX_LENGTH } from '../index.js';
+import { mjukkontroll, hardkontroll, fastlangd, langdsiffra } from './bghelpers.js';
 
-const valids = [
-  '18108401345678778',
-  '18196701475307475',
-  '1018966492531',
-  '1019080881039',
-  '03368912618',
-  '1202951008',
-  '1636976',
-];
+const valids = ['18108401345678778', '18196701475307475', '1018966492531', '1019080881039', '03368912618', '1202951008', '1636976'];
 
 const fromString = [
   ['2019121', '201912193', '0000201912136'],
@@ -127,7 +119,7 @@ describe('generate', () => {
       });
     });
 
-    fromString.forEach(([input,, valid]) => {
+    fromString.forEach(([input, , valid]) => {
       const length = valid.length;
       it(`from ${input} with fixed length ${length} pads with leading zeros to ${valid}`, () => {
         const result = fixed(input, length);
@@ -148,20 +140,20 @@ describe('generate', () => {
 
   describe('generate(from, {minLength, maxLength})', () => {
     it('throws TypeError if invalid from', () => {
-      assert.throws(() => generate(), {name: 'TypeError'});
-      assert.throws(() => generate(null), {name: 'TypeError'});
-      assert.throws(() => generate({}), {name: 'TypeError'});
+      assert.throws(() => generate(), { name: 'TypeError' });
+      assert.throws(() => generate(null), { name: 'TypeError' });
+      assert.throws(() => generate({}), { name: 'TypeError' });
     });
 
     it('throws TypeError if minLength is above maxLength', () => {
-      assert.throws(() => generate('00', {minLength: 3, maxLength: 2}), {name: 'TypeError'});
+      assert.throws(() => generate('00', { minLength: 3, maxLength: 2 }), { name: 'TypeError' });
     });
 
     it('throws TypeError if maxLength is below 2', () => {
-      assert.throws(() => generate('00', {maxLength: 1}), {name: 'TypeError'});
+      assert.throws(() => generate('00', { maxLength: 1 }), { name: 'TypeError' });
     });
 
-    it('returns 26 if \'\'', () => {
+    it("returns 26 if ''", () => {
       assert.equal(generate('').numbers, '26');
     });
 
@@ -170,64 +162,64 @@ describe('generate', () => {
     });
 
     it('pads with zeros if nothing could be used and minLength is above 2', () => {
-      assert.equal(generate('abc', {minLength: 3}).numbers, '034');
+      assert.equal(generate('abc', { minLength: 3 }).numbers, '034');
     });
 
-    it('returns something if \'0\'', () => {
+    it("returns something if '0'", () => {
       assert.equal(generate(0).numbers, '034');
       assert.equal(generate('0').numbers, '034');
     });
 
-    it('returns something if \'-1\'', () => {
+    it("returns something if '-1'", () => {
       assert.equal(generate(-1).numbers, '133');
       assert.equal(generate('-1').numbers, '133');
     });
 
     it('pads with zeros upto minLength', () => {
-      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {minLength: 17});
+      const { numbers } = generate('Customer007:Date2019-12-24:Amount$200', { minLength: 17 });
       assert.equal(numbers, '00072019122420071');
       assert.equal(numbers.length, 17, 'expected length');
     });
 
     it('fixedLength takes lesser minLength', () => {
-      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {fixedLength: 17, minLength: 13});
+      const { numbers } = generate('Customer007:Date2019-12-24:Amount$200', { fixedLength: 17, minLength: 13 });
       assert.equal(numbers, '00072019122420071');
       assert.equal(numbers.length, 17, 'expected length');
     });
 
     it('fixedLength overrides greater minLength', () => {
-      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {fixedLength: 13, minLength: 17});
+      const { numbers } = generate('Customer007:Date2019-12-24:Amount$200', { fixedLength: 13, minLength: 17 });
       assert.equal(numbers, '2019122420035');
       assert.equal(numbers.length, 13, 'expected length');
     });
 
     it('minLength = maxLength acts as fixedLength', () => {
-      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {minLength: 13, maxLength: 13});
+      const { numbers } = generate('Customer007:Date2019-12-24:Amount$200', { minLength: 13, maxLength: 13 });
       assert.equal(numbers, '2019122420035');
       assert.equal(numbers.length, 13, 'expected length');
     });
 
     it('caps from left to maxLength', () => {
-      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {maxLength: 13});
+      const { numbers } = generate('Customer007:Date2019-12-24:Amount$200', { maxLength: 13 });
       assert.equal(numbers, '2019122420035');
       assert.equal(numbers.length, 13, 'expected length');
     });
 
     it('lesser maxLength overrides fixedLength', () => {
-      const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {fixedLength: 17, maxLength: 13});
+      const { numbers } = generate('Customer007:Date2019-12-24:Amount$200', { fixedLength: 17, maxLength: 13 });
       assert.equal(numbers, '2019122420035');
       assert.equal(numbers.length, 13, 'expected length');
     });
 
     describe('plusgirot expects length between 5 and 15', () => {
       it('maxLength = 15', () => {
-        const {numbers} = generate('Customer007:Date2019-12-24:Amount$200', {minLength: 5, maxLength: 15});
+        const { numbers } = generate('Customer007:Date2019-12-24:Amount$200', { minLength: 5, maxLength: 15 });
         assert.equal(numbers, '072019122420055');
         assert.equal(numbers.length, 15, 'expected length');
       });
 
       it('minLength = 5', () => {
-        const {numbers} = generate('0', {minLength: 5, maxLength: 15});
+        const { numbers } = generate('0', { minLength: 5, maxLength: 15 });
         assert.equal(numbers, '00059');
         assert.equal(numbers.length, 5, 'expected length');
       });

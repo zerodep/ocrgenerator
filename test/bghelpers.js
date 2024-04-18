@@ -1,16 +1,11 @@
-/* eslint-disable no-var,brace-style,eqeqeq,quotes,no-unused-vars */
+/* eslint-disable no-var,no-unused-vars */
 
 /*
 Snippet from:
 https://www.bankgirot.se/Frontend/build/javascripts/app.js
 */
 
-export {
-  fastlangd,
-  hardkontroll,
-  langdsiffra,
-  mjukkontroll,
-};
+export { fastlangd, hardkontroll, langdsiffra, mjukkontroll };
 
 function mjukkontroll(ocrnummer) {
   if (!validateallfields(undefined, undefined, undefined, ocrnummer)) return false;
@@ -40,24 +35,27 @@ function modul(ocrnummer) {
   var raknestart = l - 2; // ger positionen där vi ska börja räkna (från höger)
   var raknare = 0; // för att hålla reda på vilket varv vi är på
 
-  for (var a = raknestart; a != -1; a--) //loop som går igenom ocrsträngen förutom checksiffran
-  {
+  for (
+    var a = raknestart;
+    a != -1;
+    a-- //loop som går igenom ocrsträngen förutom checksiffran
+  ) {
     asiffra = ocrstring.substr(a, 1); //asiffra får värdet av den aktuella siffran
 
-    if (raknare % 2 == 0) // om aktuell siffras position är jämn (utifrån att vi börjar på 0)
-    {
+    if (raknare % 2 == 0) {
+      // om aktuell siffras position är jämn (utifrån att vi börjar på 0)
       res1 = 0;
       res1 = 2 * asiffra;
-      if (res1 > 9) // om beräkningen blir 10 eller mer
-      {
+      if (res1 > 9) {
+        // om beräkningen blir 10 eller mer
         resm2 = res1 - 10; // räknar ut den andra siffran
         res = res + 1 + resm2; // adderar siffrorna
-      } else // om beräkningen blir mindre än 10
-      {
+      } // om beräkningen blir mindre än 10
+      else {
         res = res + res1;
       }
-    } else // om aktuell siffras position är ojämn (utifrån att vi börjar på 0)
-    {
+    } // om aktuell siffras position är ojämn (utifrån att vi börjar på 0)
+    else {
       //  udda varv
       res1 = 0;
       res1 = 1 * asiffra;
@@ -125,16 +123,15 @@ function fastlangd(ocrnummer, ocrlangd1, ocrlangd2) {
   var lsiffra2 = parseInt(ls2);
   var langdsvar;
 
-
   langdsvar = validatelangdsiffror(ocrlangd1.toString(), ocrlangd2 && ocrlangd2.toString()); //kör kollen så att de inskrivna längdsiffrorna är korrekta
-  if (langdsvar) // kollar så längden är korrekt
-  {
+  if (langdsvar) {
+    // kollar så längden är korrekt
     var svar;
     svar = modul(ocrnummer); // kör tio-modulen på ocrnumret
-    if (svar) // om tio-.modulen gick bra
-    {
-      if (lsiffra1 == l) // kollar om ocrnumret's längd motsvarar den i ocrlangd1 angivna
-      {
+    if (svar) {
+      // om tio-.modulen gick bra
+      if (lsiffra1 == l) {
+        // kollar om ocrnumret's längd motsvarar den i ocrlangd1 angivna
         return true;
       } else {
         if (lsiffra2 == l) {
@@ -144,13 +141,13 @@ function fastlangd(ocrnummer, ocrlangd1, ocrlangd2) {
         }
       }
       // slut på kontrollen mot längdsiffrorna (lsiffra==
-    } else // om tio-modulen inte gick bra
-    {
+    } // om tio-modulen inte gick bra
+    else {
       return false;
     }
     // slut på tio-modul-snurran
-  } else //om langdsiffrorna inte var korrekta
-  {
+  } //om langdsiffrorna inte var korrekta
+  else {
     //alert("Längdsiffrorna är inte korrekta")
     return false;
   }
@@ -163,38 +160,44 @@ function validatelangdsiffror(ocrlangd1, ocrlangd2) {
   var f = 0;
 
   if (ocrl1 != 0) {
-    for (var lsiffra1 = 0; lsiffra1 < ocrl1; lsiffra1++) //kollar om lÃ¤ngdsiffra1 Ã¤r annat Ã¤n siffror
-    {
-      if (f == 0 & (ocrlangd1.substring(lsiffra1, lsiffra1 + 1) < '0' || ocrlangd1.substring(lsiffra1, lsiffra1 + 1) > '9')) {
+    for (
+      var lsiffra1 = 0;
+      lsiffra1 < ocrl1;
+      lsiffra1++ //kollar om lÃ¤ngdsiffra1 Ã¤r annat Ã¤n siffror
+    ) {
+      if ((f == 0) & (ocrlangd1.substring(lsiffra1, lsiffra1 + 1) < '0' || ocrlangd1.substring(lsiffra1, lsiffra1 + 1) > '9')) {
         f = f + 1;
       }
     }
-    if (ocrlangd1 < 2) //kollar om ocrlangd1's vÃ¤rde Ã¤r mindre Ã¤n 2
-    {
+    if (ocrlangd1 < 2) {
+      //kollar om ocrlangd1's vÃ¤rde Ã¤r mindre Ã¤n 2
       f = f + 1;
     }
 
-    if (ocrlangd1 > 25) //kollar om ocrlangd1's vÃ¤rde Ã¤r mer Ã¤n 25
-    {
+    if (ocrlangd1 > 25) {
+      //kollar om ocrlangd1's vÃ¤rde Ã¤r mer Ã¤n 25
       f = f + 1;
     }
   }
 
   if (ocrl2 != 0) {
-    for (var lsiffra2 = 0; lsiffra2 < ocrl2; lsiffra2++) //kollar om lÃ¤ngdsiffra1 Ã¤r annat Ã¤n siffror
-    {
-      if (f == 0 & (ocrlangd2.substring(lsiffra2, lsiffra2 + 1) < '0' || ocrlangd2.substring(lsiffra2, lsiffra2 + 1) > '9')) {
+    for (
+      var lsiffra2 = 0;
+      lsiffra2 < ocrl2;
+      lsiffra2++ //kollar om lÃ¤ngdsiffra1 Ã¤r annat Ã¤n siffror
+    ) {
+      if ((f == 0) & (ocrlangd2.substring(lsiffra2, lsiffra2 + 1) < '0' || ocrlangd2.substring(lsiffra2, lsiffra2 + 1) > '9')) {
         f = f + 1;
       }
     }
 
-    if (ocrlangd2 < 2) //kollar om ocrlangd1's vÃ¤rde Ã¤r mindre Ã¤n 2
-    {
+    if (ocrlangd2 < 2) {
+      //kollar om ocrlangd1's vÃ¤rde Ã¤r mindre Ã¤n 2
       f = f + 1;
     }
 
-    if (ocrlangd2 > 25) //kollar om ocrlangd1's vÃ¤rde Ã¤r mer Ã¤n 25
-    {
+    if (ocrlangd2 > 25) {
+      //kollar om ocrlangd1's vÃ¤rde Ã¤r mer Ã¤n 25
       f = f + 1;
     }
   }
@@ -207,7 +210,6 @@ function validatelangdsiffror(ocrlangd1, ocrlangd2) {
 }
 
 function validateallfields(ocravtal, ocrlangd1, ocrlangd2, ocrnummer) {
-
   var f = 0; //rÃ¤knare fÃ¶r att hÃ¥lla reda pÃ¥ om det Ã¤r fel eller inte - Ã¤r 0 om inte fel
   var kost;
   kost = ocrnummer.length;
@@ -217,14 +219,17 @@ function validateallfields(ocravtal, ocrlangd1, ocrlangd2, ocrnummer) {
   //   f = f + 1;
   // }
 
-  if (ocrnummer == "") {
+  if (ocrnummer == '') {
     f = f + 1;
   }
 
   var b = 0;
-  for (var l = 0; l < kost; l++) //kollar om ocrnumret Ã¤r annat Ã¤n siffror
-  {
-    if (f == 0 & (ocrnummer.substring(l, l + 1) < '0' || ocrnummer.substring(l, l + 1) > '9')) {
+  for (
+    var l = 0;
+    l < kost;
+    l++ //kollar om ocrnumret Ã¤r annat Ã¤n siffror
+  ) {
+    if ((f == 0) & (ocrnummer.substring(l, l + 1) < '0' || ocrnummer.substring(l, l + 1) > '9')) {
       f = f + 1;
       if (b < 1) {
         b = b + 1;
@@ -232,8 +237,8 @@ function validateallfields(ocravtal, ocrlangd1, ocrlangd2, ocrnummer) {
     }
   }
 
-  if (kost < 2) //kollar om ocr-numret Ã¤r mindre Ã¤n tvÃ¥ tecken
-  {
+  if (kost < 2) {
+    //kollar om ocr-numret Ã¤r mindre Ã¤n tvÃ¥ tecken
     f = f + 1;
   }
 

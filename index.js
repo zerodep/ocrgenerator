@@ -3,12 +3,12 @@ export const MAX_LENGTH = 25;
 const ERR_OUT_OF_RANGE = 'ERR_OCR_OUT_OF_RANGE';
 const ERR_INVALID_CHAR = 'ERR_OCR_INVALID_CHAR';
 
-export function generate(from, {fixedLength, minLength = MIN_LENGTH, maxLength = MAX_LENGTH} = {}) {
+export function generate(from, { fixedLength, minLength = MIN_LENGTH, maxLength = MAX_LENGTH } = {}) {
   if (typeof from === 'number') from = from.toString();
   else if (typeof from !== 'string') throw new TypeError('input must be a string or number');
 
   if (minLength > maxLength) throw new TypeError('minLength aught to be above maxLength');
-  let {sum, length, numbers} = calculateChecksumReversed(from, {fixedLength, maxLength});
+  let { sum, length, numbers } = calculateChecksumReversed(from, { fixedLength, maxLength });
 
   length += 2;
 
@@ -28,7 +28,7 @@ export function generate(from, {fixedLength, minLength = MIN_LENGTH, maxLength =
   const control = controlDigit(sum);
   numbers += control;
 
-  return {numbers, lengthControl, control, length, sum};
+  return { numbers, lengthControl, control, length, sum };
 }
 
 export function soft(from) {
@@ -40,23 +40,27 @@ export function hard(from) {
 }
 
 export function fixed(from, fixedLength) {
-  return generate(from, {fixedLength}).numbers;
+  return generate(from, { fixedLength }).numbers;
 }
 
-export function validate(ocr, {minLength = MIN_LENGTH, maxLength = MAX_LENGTH} = {}) {
+export function validate(ocr, { minLength = MIN_LENGTH, maxLength = MAX_LENGTH } = {}) {
   if (typeof ocr === 'number') ocr = ocr.toString();
   else if (typeof ocr !== 'string') throw new TypeError('input must be a string or number');
 
   const len = ocr.length;
   const from = ocr.substring(0, len - 1);
-  const {sum, error_code, message} = calculateChecksumReversed(from, {validation: true});
-  if (error_code) return {error_code, message};
+  const { sum, error_code, message } = calculateChecksumReversed(from, { validation: true });
+  if (error_code) return { error_code, message };
 
-  if (len > maxLength) return {error_code: ERR_OUT_OF_RANGE, message: `OCR reference too long must be between ${minLength} and ${maxLength}`};
-  if (len < minLength) return {error_code: ERR_OUT_OF_RANGE, message: `OCR reference too short must be between ${minLength} and ${maxLength}`};
+  if (len > maxLength) {
+    return { error_code: ERR_OUT_OF_RANGE, message: `OCR reference too long must be between ${minLength} and ${maxLength}` };
+  }
+  if (len < minLength) {
+    return { error_code: ERR_OUT_OF_RANGE, message: `OCR reference too short must be between ${minLength} and ${maxLength}` };
+  }
 
   const control = controlDigit(sum);
-  return {valid: control == ocr[len - 1], control, sum};
+  return { valid: control == ocr[len - 1], control, sum };
 }
 
 export function validateSoft(ocr) {
@@ -71,7 +75,7 @@ export function validateVariableLength(ocr) {
   if (typeof ocr === 'number') ocr = ocr.toString();
   if (!validate(ocr).valid) return false;
   const len = ocr.length;
-  return (len % 10) == ocr[len - 2];
+  return len % 10 == ocr[len - 2];
 }
 
 export function validateFixedLength(ocr, length1, length2) {
@@ -84,10 +88,10 @@ export function validateFixedLength(ocr, length1, length2) {
   if (!validate(ocr).valid) return false;
 
   const len = ocr.length;
-  return (len === length1 || len === length2);
+  return len === length1 || len === length2;
 }
 
-export function calculateChecksumReversed(from, {fixedLength, maxLength = MAX_LENGTH, validation} = {}) {
+export function calculateChecksumReversed(from, { fixedLength, maxLength = MAX_LENGTH, validation } = {}) {
   let sum = 0;
   let numbers = '';
   let length = 0;
@@ -96,12 +100,16 @@ export function calculateChecksumReversed(from, {fixedLength, maxLength = MAX_LE
   for (let i = from.length - 1; i >= 0; --i) {
     const c = Number(from[i]);
     if (isNaN(c)) {
-      if (validation) return {error_code: ERR_INVALID_CHAR, message: `char detected at ${i}`};
+      if (validation) {
+        return { error_code: ERR_INVALID_CHAR, message: `char detected at ${i}` };
+      }
       continue;
     }
     if (fixedLength && length + 2 === fixedLength) break;
     if (length + 3 > maxLength) {
-      if (validation) return {error_code: ERR_OUT_OF_RANGE, message: `OCR reference too long must be between ${MIN_LENGTH} and ${maxLength}`};
+      if (validation) {
+        return { error_code: ERR_OUT_OF_RANGE, message: `OCR reference too long must be between ${MIN_LENGTH} and ${maxLength}` };
+      }
       break;
     }
     ++pos;
@@ -110,7 +118,7 @@ export function calculateChecksumReversed(from, {fixedLength, maxLength = MAX_LE
 
     sum += sumDigits(pos, c);
   }
-  return {numbers, sum, length};
+  return { numbers, sum, length };
 }
 
 function sumDigits(position, d) {
@@ -125,7 +133,10 @@ function controlDigit(sum) {
 
 function pad(str, fromLength, uptoLength) {
   if (fromLength < uptoLength) {
-    str = Array(uptoLength - fromLength).fill('0').join('') + str;
+    str =
+      Array(uptoLength - fromLength)
+        .fill('0')
+        .join('') + str;
   }
   return str;
 }

@@ -46,29 +46,29 @@ interface ErrorResult {
 
 export interface ChecksumResult extends ErrorResult {
   /** Reference number */
-  numbers: string,
+  numbers: string;
   /** Reversed checksum */
   sum: number;
   /** Reference number length, including control digit */
-  length: number,
+  length: number;
 }
 
 export interface GenerateResult {
   /** Reference number */
-  numbers: string,
+  numbers: string;
   /** Length control digit */
   lengthControl: number;
   /** Control digit */
   control: number;
   /** Reference number length, including control digit */
-  length: number,
+  length: number;
   /** Reversed checksum */
   sum: number;
 }
 
 export interface ValidateResult extends ErrorResult {
   /** Is valid reference number */
-  valid: boolean,
+  valid: boolean;
   /** Control digit */
   control: number;
   /** Reversed checksum */
@@ -143,7 +143,7 @@ export function validateVariableLength(ocr: from): boolean;
  * - Invalid control digit is unacceptable
  * @param ocr OCR reference number
  * @returns {boolean} Control digit is valid
-*/
+ */
 export function validateHard(ocr: from): boolean;
 
 /**
@@ -151,7 +151,7 @@ export function validateHard(ocr: from): boolean;
  * - Invalid control digit is accepted
  * @param ocr OCR reference number
  * @returns {boolean} Control digit is valid
-*/
+ */
 export function validateSoft(ocr: from): boolean;
 
 /**

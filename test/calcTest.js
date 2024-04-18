@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {calculateChecksumReversed} from '../index.js';
+import { calculateChecksumReversed } from '../index.js';
 
 describe('calculate', () => {
   describe('calculateChecksumReversed(from[, fixedLength])', () => {
@@ -8,7 +8,7 @@ describe('calculate', () => {
       assert.deepEqual(result, {
         numbers: '00720191224200',
         sum: 34,
-        length: 14
+        length: 14,
       });
     });
   });

@@ -1,16 +1,8 @@
 import assert from 'assert';
-import {validateSoft, validateHard, validateVariableLength, validateFixedLength, validate} from '../index.js';
-import {mjukkontroll, hardkontroll, fastlangd, langdsiffra} from './bghelpers.js';
+import { validateSoft, validateHard, validateVariableLength, validateFixedLength, validate } from '../index.js';
+import { mjukkontroll, hardkontroll, fastlangd, langdsiffra } from './bghelpers.js';
 
-const valids = [
-  '18108401345678778',
-  '18196701475307475',
-  '1018966492531',
-  '1019080881039',
-  '03368912618',
-  '1202951008',
-  '1636976',
-];
+const valids = ['18108401345678778', '18196701475307475', '1018966492531', '1019080881039', '03368912618', '1202951008', '1636976'];
 
 const validChecksumOnly = '1636919';
 const tooLong = Array(24).fill(1) + '61';
@@ -246,21 +238,21 @@ describe('validate', () => {
     });
 
     it('throw TypeError if invalid from', () => {
-      assert.throws(() => validate(), {name: 'TypeError'});
-      assert.throws(() => validate(null), {name: 'TypeError'});
-      assert.throws(() => validate({}), {name: 'TypeError'});
+      assert.throws(() => validate(), { name: 'TypeError' });
+      assert.throws(() => validate(null), { name: 'TypeError' });
+      assert.throws(() => validate({}), { name: 'TypeError' });
     });
 
     describe('plusgirot expects length between 5 and 15', () => {
       it('validates lengths between 5 and 15', () => {
-        assert.equal(validate('072019122420055', {minLength: 5, maxLength: 15}).valid, true);
-        assert.equal(validate('1019080881039', {minLength: 5, maxLength: 15}).valid, true);
-        assert.equal(validate('00059', {minLength: 5, maxLength: 15}).valid, true);
+        assert.equal(validate('072019122420055', { minLength: 5, maxLength: 15 }).valid, true);
+        assert.equal(validate('1019080881039', { minLength: 5, maxLength: 15 }).valid, true);
+        assert.equal(validate('00059', { minLength: 5, maxLength: 15 }).valid, true);
       });
 
       it('rejects lengths below 5 and above 15', () => {
-        assert.equal(validate('18108401345678778', {minLength: 5, maxLength: 15}).error_code, 'ERR_OCR_OUT_OF_RANGE');
-        assert.equal(validate('0042', {minLength: 5, maxLength: 15}).error_code, 'ERR_OCR_OUT_OF_RANGE');
+        assert.equal(validate('18108401345678778', { minLength: 5, maxLength: 15 }).error_code, 'ERR_OCR_OUT_OF_RANGE');
+        assert.equal(validate('0042', { minLength: 5, maxLength: 15 }).error_code, 'ERR_OCR_OUT_OF_RANGE');
       });
     });
   });

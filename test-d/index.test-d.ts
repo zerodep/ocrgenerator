@@ -1,4 +1,4 @@
-import {expectType} from 'tsd';
+import { expectType } from 'tsd';
 import ocregenerator, { ChecksumResult } from '../';
 
 expectType<ocregenerator.GenerateResult>(ocregenerator.generate('1234'));
@@ -9,6 +9,8 @@ expectType<boolean>(ocregenerator.validateFixedLength('1234', 4));
 expectType<boolean>(ocregenerator.validateVariableLength('1234'));
 expectType<boolean>(ocregenerator.validateSoft('1234'));
 expectType<boolean>(ocregenerator.validateHard('1234'));
-expectType<ChecksumResult>(ocregenerator.calculateChecksumReversed('1234', {
-  validation: true
-}));
+expectType<ChecksumResult>(
+  ocregenerator.calculateChecksumReversed('1234', {
+    validation: true,
+  }),
+);

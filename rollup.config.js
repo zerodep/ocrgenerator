@@ -4,7 +4,7 @@ export default {
   input: './index.js',
   plugins: [
     commonjs({
-      sourceMap: false
+      sourceMap: false,
     }),
   ],
   output: [
@@ -17,5 +17,5 @@ export default {
       name: 'ocrgenerator',
       format: 'umd',
     },
-  ]
+  ],
 };

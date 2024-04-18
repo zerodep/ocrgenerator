@@ -1,5 +1,4 @@
-OCR generator
-=============
+# OCR generator
 
 [![Build](https://github.com/zerodep/ocrgenerator/actions/workflows/build.yaml/badge.svg)](https://github.com/zerodep/ocrgenerator/actions/workflows/build.yaml)[![Coverage Status](https://coveralls.io/repos/github/zerodep/ocrgenerator/badge.svg?branch=master)](https://coveralls.io/github/zerodep/ocrgenerator?branch=master)
 
@@ -9,14 +8,15 @@ Swedish invoice number generator based on modulus 10.
 
 Swedish banks can take an invoice number that is validated against four algorithms, all based on modulus 10 or Luhn. The purpose of this project is to generate such invoice numbers from almost any given string.
 
-- *soft algorithm*: invalid control digit is accepted
-- *hard algorithm*: invalid control digit is unacceptable
-- *variable length algorithm*: invalid control digit is unacceptable and second to last digit is the length control digit and must match total length % 10 of invoice number. The length control digit is also included in the modulus 10 calculation
-- *fixed length algorithm*: up to two lengths are agreed with the bank and must be matched by the invoice number and an invalid control digit is unacceptable
+- _soft algorithm_: invalid control digit is accepted
+- _hard algorithm_: invalid control digit is unacceptable
+- _variable length algorithm_: invalid control digit is unacceptable and second to last digit is the length control digit and must match total length % 10 of invoice number. The length control digit is also included in the modulus 10 calculation
+- _fixed length algorithm_: up to two lengths are agreed with the bank and must be matched by the invoice number and an invalid control digit is unacceptable
 
 ## Api
 
 Functions:
+
 - [`generate(from[, options])`](#generatefrom-options): generate invoice number with length control and checksum digits
 - `soft(from)`: same as generate without options
 - `hard(from)`: same as generate without options
@@ -29,6 +29,7 @@ Functions:
 - `validateFixedLength(ocr, length1[, length2])`: validate fixed length, takes ocr and one length, and one optional length, either must match
 
 Properties:
+
 - `MIN_LENGTH`: 2
 - `MAX_LENGTH`: 25
 
@@ -39,12 +40,14 @@ The above tresholds - `MIN_LENGTH` and `MAX_LENGTH` - is the expected invoice nu
 Generate invoice number with length control and checksum.
 
 Arguments:
+
 - `from`: any given string, e.g. customer number + date + amount
 - `options`: optional options
   - `minLength`: defaults to `MIN_LENGTH`
   - `maxLength`: defaults to `MAX_LENGTH`
 
 Returns:
+
 - `numbers`: the actual generated invoice number
 - `lengthControl`: length control digit
 - `control`: control digit
@@ -55,14 +58,16 @@ Returns:
 - `message`: occasional error message
 
 Example:
+
 ```js
-import {generate} from 'ocrgenerator';
+import { generate } from 'ocrgenerator';
 
 const invoiceNo = generate('Customer007:Date2019-12-24:Amount$200');
 console.log(invoiceNo); // {numbers: '0072019122420063'}
 ```
 
 Modulus 10 reversed:
+
 ```
 Customer007:Date2019-12-24:Amount$200
         007     2019 12 24        200 l = 16 % 10 = 6
@@ -89,12 +94,14 @@ Invoice number: `'00720191224200' + l + c = '0072019122420063'`
 Validate ocr according to modulus 10 and return object describing what went wrong if invalid.
 
 Arguments:
+
 - `ocr`: invoice number
 - `options`: optional options
   - `minLength`: defaults to `MIN_LENGTH`
   - `maxLength`: defaults to `MAX_LENGTH`
 
 Returns:
+
 - `valid`: boolean indicating that the modulus 10 check was successfull
 - `sum`: checksum
 - `control`: expected control digit
