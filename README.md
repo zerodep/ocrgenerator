@@ -59,7 +59,7 @@ Returns:
 
 Example:
 
-```js
+```javascript
 import { generate } from 'ocrgenerator';
 
 const invoiceNo = generate('Customer007:Date2019-12-24:Amount$200');
@@ -109,6 +109,20 @@ Returns:
   - `ERR_OCR_INVALID_CHAR`: a character has sneeked into ocr
   - `ERR_OCR_OUT_OF_RANGE`: OCR reference was out of range, i.e. < 2 or > 25
 - `message`: occasional error message
+
+Example:
+
+```javascript
+import { validate } from 'ocrgenerator';
+
+console.log(validate('0072019122420063')); // true
+
+console.log(validate('0072019122420063' + '7')); // false
+
+console.log(validate('0072019122420063' + 'A')); // sneaky character
+
+console.log(validate('0072019122420063', { maxLength: 15 }));
+```
 
 ## References
 

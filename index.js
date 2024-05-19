@@ -48,8 +48,12 @@ export function validate(ocr, { minLength = MIN_LENGTH, maxLength = MAX_LENGTH }
   else if (typeof ocr !== 'string') throw new TypeError('input must be a string or number');
 
   const len = ocr.length;
+  const currentControl = Number(ocr[len - 1]);
+  if (isNaN(currentControl)) return { error_code: ERR_INVALID_CHAR, message: `char detected at ${len - 1}` };
+
   const from = ocr.substring(0, len - 1);
   const { sum, error_code, message } = calculateChecksumReversed(from, { validation: true });
+
   if (error_code) return { error_code, message };
 
   if (len > maxLength) {
@@ -60,7 +64,7 @@ export function validate(ocr, { minLength = MIN_LENGTH, maxLength = MAX_LENGTH }
   }
 
   const control = controlDigit(sum);
-  return { valid: control == ocr[len - 1], control, sum };
+  return { valid: control == currentControl, control, sum };
 }
 
 export function validateSoft(ocr) {

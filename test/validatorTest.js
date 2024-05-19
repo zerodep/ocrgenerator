@@ -234,7 +234,13 @@ describe('validate', () => {
     });
 
     it('returns error char if sneeky char', () => {
-      assert.equal(validate('0abc3').error_code, 'ERR_OCR_INVALID_CHAR');
+      let invalid = validate('0abc3');
+      assert.equal(invalid.valid, undefined);
+      assert.equal(invalid.error_code, 'ERR_OCR_INVALID_CHAR');
+
+      invalid = validate('1636976A');
+      assert.equal(invalid.valid, undefined);
+      assert.equal(invalid.error_code, 'ERR_OCR_INVALID_CHAR');
     });
 
     it('throw TypeError if invalid from', () => {

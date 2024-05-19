@@ -1,6 +1,6 @@
 {
   "name": "ocrgenerator",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Swedish invoice no generator",
   "license": "MIT",
   "author": {
@@ -15,18 +15,19 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "git://github.com/zerodep/ocrgenerator"
+    "url": "git://github.com/zerodep/ocrgenerator.git"
   },
   "bugs": {
     "url": "https://github.com/zerodep/ocrgenerator/issues"
   },
   "scripts": {
     "test": "mocha",
-    "posttest": "npm run lint && npm run dist && npm run tsd",
+    "posttest": "npm run lint && npm run dist && npm run tsd && npm run test:md",
     "lint": "eslint . --cache && prettier . --check --cache",
     "dist": "rollup -c",
     "tsd": "tsd",
     "prepack": "npm run dist",
+    "test:md": "texample",
     "cov:html": "c8 -r html -r text mocha",
     "test:lcov": "c8 -r lcov mocha && npm run lint"
   },
@@ -51,6 +52,7 @@
     "mocha": "^10.4.0",
     "prettier": "^3.2.5",
     "rollup": "^4.14.3",
+    "texample": "^0.0.5",
     "tsd": "^0.31.0"
   },
   "files": [
