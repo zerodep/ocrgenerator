@@ -46,13 +46,13 @@
     "validator"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "c8": "^9.1.0",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "c8": "^10.1.2",
     "eslint": "^9.0.0",
-    "mocha": "^10.4.0",
+    "mocha": "^11.0.1",
     "prettier": "^3.2.5",
     "rollup": "^4.14.3",
-    "texample": "^0.0.5",
+    "texample": "^0.0.6",
     "tsd": "^0.31.0"
   },
   "files": [
