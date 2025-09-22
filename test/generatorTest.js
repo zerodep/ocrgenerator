@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { soft, hard, fixed, generate, MIN_LENGTH, MAX_LENGTH } from '../index.js';
+import { soft, hard, fixed, generate, MIN_LENGTH, MAX_LENGTH } from 'ocrgenerator';
 import { mjukkontroll, hardkontroll, fastlangd, langdsiffra } from './bghelpers.js';
 
 const valids = ['18108401345678778', '18196701475307475', '1018966492531', '1019080881039', '03368912618', '1202951008', '1636976'];

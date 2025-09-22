@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { validateSoft, validateHard, validateVariableLength, validateFixedLength, validate } from '../index.js';
+import { validateSoft, validateHard, validateVariableLength, validateFixedLength, validate } from 'ocrgenerator';
 import { mjukkontroll, hardkontroll, fastlangd, langdsiffra } from './bghelpers.js';
 
 const valids = ['18108401345678778', '18196701475307475', '1018966492531', '1019080881039', '03368912618', '1202951008', '1636976'];
@@ -141,6 +141,13 @@ describe('validate', () => {
       assert.equal(result, true);
     });
 
+    it('second length argument is optional, falsy defaults to first', () => {
+      assert.equal(validateFixedLength(validChecksumOnly, 7), true);
+      assert.equal(validateFixedLength(validChecksumOnly, 7, null), true);
+      assert.equal(validateFixedLength(validChecksumOnly, 7, ''), true);
+      assert.equal(validateFixedLength(validChecksumOnly, 7, 0), true);
+    });
+
     it('returns false if length is not among length arguments', () => {
       const result = validateFixedLength(validChecksumOnly, 11, 1);
       assert.equal(result, fastlangd(validChecksumOnly, 11, 1));
@@ -235,11 +242,11 @@ describe('validate', () => {
 
     it('returns error char if sneeky char', () => {
       let invalid = validate('0abc3');
-      assert.equal(invalid.valid, undefined);
+      assert.equal(invalid.valid, false);
       assert.equal(invalid.error_code, 'ERR_OCR_INVALID_CHAR');
 
       invalid = validate('1636976A');
-      assert.equal(invalid.valid, undefined);
+      assert.equal(invalid.valid, false);
       assert.equal(invalid.error_code, 'ERR_OCR_INVALID_CHAR');
     });
 

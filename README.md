@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/zerodep/ocrgenerator/actions/workflows/build.yaml/badge.svg)](https://github.com/zerodep/ocrgenerator/actions/workflows/build.yaml)[![Coverage Status](https://coveralls.io/repos/github/zerodep/ocrgenerator/badge.svg?branch=master)](https://coveralls.io/github/zerodep/ocrgenerator?branch=master)
 
-Swedish invoice number generator based on modulus 10.
+Swedish invoice number validator and generator based on modulus 10.
 
 ## Introduction
 
@@ -23,8 +23,8 @@ Functions:
 - `fixed(from, fixedLength)`: generate with fixed length, padded with preceeding zeros if too short and capped from left if too long
 - `calculateChecksumReversed(ocr[, options])`: calculate checksum from right
 - [`validate(ocr[, options])`](#validateocr-options): validate ocr according to modulus 10
-- `validateHard(ocr)`: validate against hard algorithm, invalid control digit is unacceptable
-- `validateSoft(ocr)`: same as validateHard, invalid control digit is unacceptable, i.e. a falsy result is accepted
+- [`validateHard(ocr)`](#validatehardocr): validate against hard algorithm, invalid control digit is unacceptable
+- [`validateSoft(ocr)`](#validatesoftocr): same as validateHard, invalid control digit is unacceptable, i.e. a falsy result is accepted
 - `validateVariableLength(ocr)`: controls checksum and length control
 - `validateFixedLength(ocr, length1[, length2])`: validate fixed length, takes ocr and one length, and one optional length, either must match
 
@@ -35,7 +35,7 @@ Properties:
 
 The above tresholds - `MIN_LENGTH` and `MAX_LENGTH` - is the expected invoice number length range for bankgirot, for plusgirot it is 5 and 15.
 
-## generate(from[, options])
+### generate(from[, options])
 
 Generate invoice number with length control and checksum.
 
@@ -89,7 +89,7 @@ reference control digit: `c = 10 - sum % 10 = 10 - 37 % 10 = 10 - 7 = 3`
 
 Invoice number: `'00720191224200' + l + c = '0072019122420063'`
 
-## validate(ocr[, options])
+### validate(ocr[, options])
 
 Validate ocr according to modulus 10 and return object describing what went wrong if invalid.
 
@@ -122,6 +122,30 @@ console.log(validate('0072019122420063' + '7')); // false
 console.log(validate('0072019122420063' + 'A')); // sneaky character
 
 console.log(validate('0072019122420063', { maxLength: 15 }));
+```
+
+### `validateHard(ocr)`
+
+```javascript
+import { validateHard } from 'ocrgenerator';
+
+console.log(validateHard('0072019122420063')); // true
+
+console.log(validateHard('0072019122420063' + '7')); // false
+
+console.log(validateHard('0072019122420063' + 'A')); // false, sneaky character
+```
+
+### `validateSoft(ocr)`
+
+```javascript
+import { validateSoft } from 'ocrgenerator';
+
+console.log(validateSoft('0072019122420063')); // true
+
+console.log(validateSoft('0072019122420063' + '7')); // false
+
+console.log(validateSoft('0072019122420063' + 'A')); // false, sneaky character
 ```
 
 ## References

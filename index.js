@@ -1,8 +1,20 @@
 export const MIN_LENGTH = 2;
 export const MAX_LENGTH = 25;
-const ERR_OUT_OF_RANGE = 'ERR_OCR_OUT_OF_RANGE';
-const ERR_INVALID_CHAR = 'ERR_OCR_INVALID_CHAR';
 
+/**
+ * @enum {string} ErrorCodes Validation error codes
+ */
+export const ErrorCodes = {
+  OutOfRange: 'ERR_OCR_OUT_OF_RANGE',
+  InvalidChar: 'ERR_OCR_INVALID_CHAR',
+};
+
+/**
+ * Generate invoice number with length control and checksum.
+ * @param {string | number} from
+ * @param {import('types').FixedOptions} [options]
+ * @returns {GenerateResult}
+ */
 export function generate(from, { fixedLength, minLength = MIN_LENGTH, maxLength = MAX_LENGTH } = {}) {
   if (typeof from === 'number') from = from.toString();
   else if (typeof from !== 'string') throw new TypeError('input must be a string or number');
@@ -31,57 +43,118 @@ export function generate(from, { fixedLength, minLength = MIN_LENGTH, maxLength 
   return { numbers, lengthControl, control, length, sum };
 }
 
+/**
+ * Same as generate without options
+ * @param {string | number} from
+ * @returns Reference number
+ */
 export function soft(from) {
   return generate(from).numbers;
 }
 
+/**
+ * Same as generate without options
+ * @param {string | number} from Generate from input
+ * @returns Reference number
+ */
 export function hard(from) {
   return generate(from).numbers;
 }
 
+/**
+ * Generate with fixed length
+ * Padded with preceeding zeros if too short and capped from left if too long
+ * @param {string | number} from Generate from input
+ * @param {number} fixedLength OCR reference number length
+ * @returns Reference number
+ */
 export function fixed(from, fixedLength) {
   return generate(from, { fixedLength }).numbers;
 }
 
+/**
+ * Validate OCR reference number
+ * @param {string | number} ocr - OCR reference number
+ * @param {import('types').LengthOptions} [options] - Validate options
+ * @returns {ValidateResult} - Validation result
+ */
 export function validate(ocr, { minLength = MIN_LENGTH, maxLength = MAX_LENGTH } = {}) {
   if (typeof ocr === 'number') ocr = ocr.toString();
   else if (typeof ocr !== 'string') throw new TypeError('input must be a string or number');
 
   const len = ocr.length;
   const currentControl = Number(ocr[len - 1]);
-  if (isNaN(currentControl)) return { error_code: ERR_INVALID_CHAR, message: `char detected at ${len - 1}` };
+  if (isNaN(currentControl)) return { valid: false, error_code: ErrorCodes.InvalidChar, message: `char detected at ${len - 1}` };
 
   const from = ocr.substring(0, len - 1);
   const { sum, error_code, message } = calculateChecksumReversed(from, { validation: true });
 
-  if (error_code) return { error_code, message };
+  if (error_code) return { valid: false, error_code, message };
 
   if (len > maxLength) {
-    return { error_code: ERR_OUT_OF_RANGE, message: `OCR reference too long must be between ${minLength} and ${maxLength}` };
+    return {
+      valid: false,
+      error_code: ErrorCodes.OutOfRange,
+      message: `OCR reference too long must be between ${minLength} and ${maxLength}`,
+    };
   }
   if (len < minLength) {
-    return { error_code: ERR_OUT_OF_RANGE, message: `OCR reference too short must be between ${minLength} and ${maxLength}` };
+    return {
+      valid: false,
+      error_code: ErrorCodes.OutOfRange,
+      message: `OCR reference too short must be between ${minLength} and ${maxLength}`,
+    };
   }
 
+  // @ts-ignore
   const control = controlDigit(sum);
   return { valid: control == currentControl, control, sum };
 }
 
+/**
+ * Validate against soft algorithm
+ * - Invalid control digit is accepted
+ * @param {string | number} ocr OCR reference number
+ * @returns Control digit is valid
+ */
 export function validateSoft(ocr) {
   return !!validate(ocr).valid;
 }
 
+/**
+ * Validate against hard algorithm
+ * - Invalid control digit is unacceptable
+ * @param {string | number} ocr OCR reference number
+ * @returns Control digit is valid
+ */
 export function validateHard(ocr) {
   return !!validate(ocr).valid;
 }
 
+/**
+ * Validate against variable length algorithm
+ * - Invalid control digit is unacceptable
+ * - Invalid length control digit is unacceptable
+ * @param {string | number} ocr OCR reference number
+ * @returns Control digit and length control are valid
+ */
 export function validateVariableLength(ocr) {
   if (typeof ocr === 'number') ocr = ocr.toString();
   if (!validate(ocr).valid) return false;
   const len = ocr.length;
+  // @ts-ignore
   return len % 10 == ocr[len - 2];
 }
 
+/**
+ * Validate against fixed length algorithm
+ * - Invalid control digit is unacceptable
+ * - Invalid length control digit is unacceptable
+ * @param {string | number} ocr OCR reference number
+ * @param {number} length1 Check length
+ * @param {number} [length2] Optional alternative length
+ * @returns Control digit and length control are valid
+ */
 export function validateFixedLength(ocr, length1, length2) {
   if (typeof ocr === 'number') ocr = ocr.toString();
   if (length1 < MIN_LENGTH || length1 > MAX_LENGTH) return false;
@@ -95,46 +168,67 @@ export function validateFixedLength(ocr, length1, length2) {
   return len === length1 || len === length2;
 }
 
+/**
+ * Calculate checksum
+ * @param {string} from Input
+ * @param {import('types').CalculateOptions} [options]
+ * @returns {Partial<ChecksumResult>}
+ */
 export function calculateChecksumReversed(from, { fixedLength, maxLength = MAX_LENGTH, validation } = {}) {
   let sum = 0;
   let numbers = '';
   let length = 0;
-  let pos = validation ? -1 : 0;
+  let position = validation ? -1 : 0;
 
   for (let i = from.length - 1; i >= 0; --i) {
     const c = Number(from[i]);
     if (isNaN(c)) {
       if (validation) {
-        return { error_code: ERR_INVALID_CHAR, message: `char detected at ${i}` };
+        return { error_code: ErrorCodes.InvalidChar, message: `char detected at ${i}` };
       }
       continue;
     }
     if (fixedLength && length + 2 === fixedLength) break;
     if (length + 3 > maxLength) {
       if (validation) {
-        return { error_code: ERR_OUT_OF_RANGE, message: `OCR reference too long must be between ${MIN_LENGTH} and ${maxLength}` };
+        return {
+          error_code: ErrorCodes.OutOfRange,
+          message: `OCR reference too long must be between ${MIN_LENGTH} and ${maxLength}`,
+        };
       }
       break;
     }
-    ++pos;
-    ++length;
+    position++;
+    length++;
     numbers = c + numbers;
 
-    sum += sumDigits(pos, c);
+    sum += sumDigits(position, c);
   }
   return { numbers, sum, length };
 }
 
+/**
+ * @param {number} position
+ * @param {number} d
+ */
 function sumDigits(position, d) {
   if (position % 2) return d;
   return d < 5 ? d * 2 : d * 2 - 9;
 }
 
+/**
+ * @param {number} sum
+ */
 function controlDigit(sum) {
   const digit = sum % 10;
   return digit ? 10 - digit : 0;
 }
 
+/**
+ * @param {string} str
+ * @param {number} fromLength
+ * @param {number} uptoLength
+ */
 function pad(str, fromLength, uptoLength) {
   if (fromLength < uptoLength) {
     str =
@@ -144,3 +238,30 @@ function pad(str, fromLength, uptoLength) {
   }
   return str;
 }
+
+/**
+ * @typedef {object} ChecksumResult
+ * @property {string} numbers Reference number
+ * @property {number} sum Reversed checksum
+ * @property {number} length Reference number length, including control digit
+ * @property {ErrorCodes} [error_code] Occasional error code
+ * @property {string} [message] Error message associated with error code
+ */
+
+/**
+ * @typedef {object} GenerateResult
+ * @property {string} numbers Reference number
+ * @property {number} sum Reversed checksum
+ * @property {number} lengthControl Length control digit
+ * @property {number} control Reversed checksum
+ * @property {number} length Reference number length, including control digit
+ */
+
+/**
+ * @typedef ValidateResult
+ * @property {boolean} valid Is valid reference number
+ * @property {number} [control] Control digit
+ * @property {number} [sum] Reversed checksum
+ * @property {ErrorCodes} [error_code] Occasional error code
+ * @property {string} [message] Error message associated with error code
+ */

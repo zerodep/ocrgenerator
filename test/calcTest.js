@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { calculateChecksumReversed } from '../index.js';
+import { calculateChecksumReversed } from 'ocrgenerator';
 
 describe('calculate', () => {
   describe('calculateChecksumReversed(from[, fixedLength])', () => {

@@ -1,0 +1,30 @@
+{
+  "include": ["./index.js", "types"],
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "sourceMap": false,
+    "rootDir": "/",
+    "lib": ["es2018"],
+    "target": "ES2022",
+    "outDir": "./tmp/ignore",
+    "declaration": true,
+    "noEmitOnError": true,
+    "noErrorTruncation": true,
+    "allowJs": true,
+    "checkJs": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "stripInternal": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": false,
+    "typeRoots": ["./node_modules/@types"],
+    "paths": {
+      "types": ["./types/interfaces.js"]
+    }
+  }
+}

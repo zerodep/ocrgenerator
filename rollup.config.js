@@ -1,7 +1,12 @@
+import { createRequire } from 'node:module';
 import commonjs from '@rollup/plugin-commonjs';
 
+const require = createRequire(import.meta.url);
+
+const pkg = require('./package.json');
+
 export default {
-  input: './index.js',
+  input: pkg.exports.import,
   plugins: [
     commonjs({
       sourceMap: false,
@@ -9,12 +14,12 @@ export default {
   ],
   output: [
     {
-      file: 'main.cjs',
+      file: pkg.exports.require,
       format: 'cjs',
     },
     {
-      file: 'ocrgenerator.cjs',
-      name: 'ocrgenerator',
+      file: pkg.exports.browser,
+      name: pkg.name,
       format: 'umd',
     },
   ],
