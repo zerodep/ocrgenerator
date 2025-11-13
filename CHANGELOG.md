@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.1] - 2025-11-13
+
+- proof of provenance release
+
 ## [2.0.0] - 2025-08-17
 
 - generate type definitions with dts-buddy

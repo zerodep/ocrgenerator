@@ -1,6 +1,6 @@
 {
   "name": "ocrgenerator",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Swedish invoice no generator",
   "license": "MIT",
   "author": {
@@ -52,7 +52,7 @@
     "validator"
   ],
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-commonjs": "^29.0.0",
     "c8": "^10.1.2",
     "dts-buddy": "^0.6.1",
     "eslint": "^9.0.0",
