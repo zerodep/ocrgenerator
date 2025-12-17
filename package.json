@@ -59,7 +59,7 @@
     "mocha": "^11.0.1",
     "prettier": "^3.5.3",
     "rollup": "^4.14.3",
-    "texample": "^0.0.8",
+    "texample": "^0.1.0",
     "tsd": "^0.33.0"
   },
   "files": [
