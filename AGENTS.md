@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `ocrgenerator` generates and validates Swedish OCR / invoice reference numbers (modulus 10, Luhn-variant). It implements the four bankgirot algorithms — soft, hard, variable-length, and fixed-length — and has zero runtime dependencies. Default bounds (`MIN_LENGTH=2`, `MAX_LENGTH=25`) are bankgirot's; plusgirot callers pass `{ minLength: 5, maxLength: 15 }`.
 
-Node version is pinned to 18 via `.nvmrc`.
+Node version is pinned to 20 via `.nvmrc`. CI builds against node 20, 22, 24, and latest.
 
 ## Commands
 
