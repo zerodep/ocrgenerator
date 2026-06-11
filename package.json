@@ -1,6 +1,6 @@
 {
   "name": "ocrgenerator",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Swedish invoice no generator",
   "license": "MIT",
   "author": {
@@ -52,14 +52,17 @@
     "validator"
   ],
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@rollup/plugin-commonjs": "^29.0.0",
-    "c8": "^10.1.2",
-    "dts-buddy": "^0.6.1",
-    "eslint": "^9.0.0",
+    "c8": "^11.0.0",
+    "dts-buddy": "^0.8.0",
+    "eslint": "^10.4.1",
+    "globals": "^17.6.0",
+    "happy-dom": "^20.9.0",
     "mocha": "^11.0.1",
     "prettier": "^3.5.3",
     "rollup": "^4.14.3",
-    "texample": "^0.1.0",
+    "texample": "^1.0.0",
     "tsd": "^0.33.0"
   },
   "files": [

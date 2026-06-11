@@ -1,6 +1,8 @@
 export const MIN_LENGTH = 2;
 export const MAX_LENGTH = 25;
 
+const DOUBLED = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
+
 /**
  * @enum {string} ErrorCodes Validation error codes
  */
@@ -25,10 +27,10 @@ export function generate(from, { fixedLength, minLength = MIN_LENGTH, maxLength 
   length += 2;
 
   if (fixedLength && fixedLength <= maxLength) {
-    numbers = pad(numbers, length, fixedLength);
+    numbers = numbers.padStart(fixedLength - 2, '0');
     length = fixedLength;
   } else if (length < minLength) {
-    numbers = pad(numbers, length, minLength);
+    numbers = numbers.padStart(minLength - 2, '0');
     length = minLength;
   }
 
@@ -212,8 +214,7 @@ export function calculateChecksumReversed(from, { fixedLength, maxLength = MAX_L
  * @param {number} d
  */
 function sumDigits(position, d) {
-  if (position % 2) return d;
-  return d < 5 ? d * 2 : d * 2 - 9;
+  return position % 2 ? d : DOUBLED[d];
 }
 
 /**
@@ -222,21 +223,6 @@ function sumDigits(position, d) {
 function controlDigit(sum) {
   const digit = sum % 10;
   return digit ? 10 - digit : 0;
-}
-
-/**
- * @param {string} str
- * @param {number} fromLength
- * @param {number} uptoLength
- */
-function pad(str, fromLength, uptoLength) {
-  if (fromLength < uptoLength) {
-    str =
-      Array(uptoLength - fromLength)
-        .fill('0')
-        .join('') + str;
-  }
-  return str;
 }
 
 /**

@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## v3.0.0 - 2026-06-11
+
+- use builtin `String.prototype.padStart` to pad zeros to generated ocr reference
+- minor optimization in calculation of modulus length
+
 ## v2.0.1 - 2025-11-13
 
 - proof of provenance release
