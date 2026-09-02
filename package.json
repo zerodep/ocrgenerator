@@ -1,11 +1,11 @@
 {
   "name": "ocrgenerator",
-  "version": "3.0.0",
-  "description": "Swedish invoice no generator",
+  "version": "3.0.1",
+  "description": "Swedish OCR invoice number validator and generator",
   "license": "MIT",
   "author": {
     "name": "Zerodep AB",
-    "url": "https://github.com/zerodep"
+    "url": "https://0dep.se"
   },
   "type": "module",
   "main": "main.cjs",
@@ -21,11 +21,12 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "git://github.com/zerodep/ocrgenerator.git"
+    "url": "git+https://github.com/zerodep/ocrgenerator.git"
   },
   "bugs": {
     "url": "https://github.com/zerodep/ocrgenerator/issues"
   },
+  "homepage": "https://0dep.se/tools",
   "scripts": {
     "test": "mocha",
     "posttest": "npm run lint && npm run dist && npm run tsd && npm run test:md",
@@ -59,7 +60,7 @@
     "eslint": "^10.4.1",
     "globals": "^17.6.0",
     "happy-dom": "^20.9.0",
-    "mocha": "^11.0.1",
+    "mocha": "^12.0.0",
     "prettier": "^3.5.3",
     "rollup": "^4.14.3",
     "texample": "^1.0.0",

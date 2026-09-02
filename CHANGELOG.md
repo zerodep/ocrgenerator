@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## v3.0.1 - 2026-09-02
+
+- change homepage to https://0dep.se/tools where package is demonstrated
+
 ## v3.0.0 - 2026-06-11
 
 - use builtin `String.prototype.padStart` to pad zeros to generated ocr reference
