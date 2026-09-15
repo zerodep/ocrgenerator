@@ -1,6 +1,6 @@
 {
   "name": "ocrgenerator",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Swedish OCR invoice number validator and generator",
   "license": "MIT",
   "author": {
@@ -26,7 +26,7 @@
   "bugs": {
     "url": "https://github.com/zerodep/ocrgenerator/issues"
   },
-  "homepage": "https://0dep.se/tools",
+  "homepage": "https://0dep.se/tools/",
   "scripts": {
     "test": "mocha",
     "posttest": "npm run lint && npm run dist && npm run tsd && npm run test:md",

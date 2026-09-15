@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## v3.0.2 - 2026-09-15
+
+- change homepage to https://0dep.se/tools/ to avoid permanent redirect
+
 ## v3.0.1 - 2026-09-02
 
 - change homepage to https://0dep.se/tools where package is demonstrated
