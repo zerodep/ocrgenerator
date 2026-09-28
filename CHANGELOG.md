@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ## v3.0.3 - 2026-09-28
 
 - fix readme typos and add table of contents
+- include CHANGELOG.md in pack
 
 ## v3.0.2 - 2026-09-15
 

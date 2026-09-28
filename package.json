@@ -72,7 +72,8 @@
     "types/index.d.ts",
     "types/index.d.ts.map",
     "main.cjs",
-    "ocrgenerator.cjs"
+    "ocrgenerator.cjs",
+    "CHANGELOG.md"
   ],
   "directories": {
     "test": "test"
