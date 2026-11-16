@@ -2,10 +2,20 @@ import assert from 'assert';
 import { validateSoft, validateHard, validateVariableLength, validateFixedLength, validate } from 'ocrgenerator';
 import { mjukkontroll, hardkontroll, fastlangd, langdsiffra } from './bghelpers.js';
 
-const valids = ['18108401345678778', '18196701475307475', '1018966492531', '1019080881039', '03368912618', '1202951008', '1636976'];
+const validMaxLength = '8901234567890123456789056';
+const valids = [
+  validMaxLength,
+  '18108401345678778',
+  '18196701475307475',
+  '1018966492531',
+  '1019080881039',
+  '03368912618',
+  '1202951008',
+  '1636976',
+];
 
 const validChecksumOnly = '1636919';
-const tooLong = Array(24).fill(1) + '61';
+const tooLong = '1'.repeat(24) + '61';
 
 describe('validate', () => {
   describe('mjuk kontrollnivå', () => {
@@ -141,6 +151,12 @@ describe('validate', () => {
       assert.equal(result, true);
     });
 
+    it('returns true if valid total length is 25', () => {
+      const result = validateFixedLength(validMaxLength, 25);
+      assert.equal(result, fastlangd(validMaxLength, 25));
+      assert.equal(result, true);
+    });
+
     it('second length argument is optional, falsy defaults to first', () => {
       assert.equal(validateFixedLength(validChecksumOnly, 7), true);
       assert.equal(validateFixedLength(validChecksumOnly, 7, null), true);
@@ -196,8 +212,8 @@ describe('validate', () => {
     });
 
     it('returns false if length is above 25', () => {
-      const result = validateFixedLength(tooLong, 2, 3);
-      assert.equal(result, fastlangd(tooLong, 2, 3));
+      const result = validateFixedLength(tooLong, tooLong.length);
+      assert.equal(result, fastlangd(tooLong, tooLong.length));
       assert.equal(result, false);
     });
   });
@@ -232,8 +248,32 @@ describe('validate', () => {
       });
     });
 
+    it('returns valid true if length is 25', () => {
+      assert.equal(validMaxLength.length, 25);
+      assert.equal(validate(validMaxLength).valid, true);
+    });
+
+    it('returns valid true if length is within maxLength above 25', () => {
+      const valid = '345678901234567890123456789005';
+      assert.deepEqual(validate(valid, { maxLength: 30 }), { valid: true, control: 5, sum: getChecksum(valid) });
+    });
+
     it('returns error out of range if too long', () => {
       assert.equal(validate(Array(26).fill('0').join('')).error_code, 'ERR_OCR_OUT_OF_RANGE');
+    });
+
+    it('returns error out of range if too long even if control digits are valid', () => {
+      assert.equal(tooLong.length, 26);
+      assert.equal(validate(tooLong, { maxLength: 26 }).valid, true);
+      assert.equal(validate(tooLong).error_code, 'ERR_OCR_OUT_OF_RANGE');
+    });
+
+    it('returns error out of range with expected range if longer than maxLength', () => {
+      assert.deepEqual(validate('345678901234567890123456789005', { minLength: 5, maxLength: 29 }), {
+        valid: false,
+        error_code: 'ERR_OCR_OUT_OF_RANGE',
+        message: 'OCR reference too long must be between 5 and 29',
+      });
     });
 
     it('returns error out of range if too short', () => {
@@ -248,6 +288,31 @@ describe('validate', () => {
       invalid = validate('1636976A');
       assert.equal(invalid.valid, false);
       assert.equal(invalid.error_code, 'ERR_OCR_INVALID_CHAR');
+    });
+
+    it('returns error char if blank, tab, or newline', () => {
+      assert.equal(validate('123463').valid, true);
+      for (const [ocr, position] of [
+        ['12 3463', 2],
+        ['123\n463', 3],
+        ['\t123463', 0],
+        ['123463\n', 6],
+        ['123463 ', 6],
+        ['12346 ', 5],
+        ['1234\u00a063', 4],
+      ]) {
+        assert.deepEqual(
+          validate(ocr),
+          { valid: false, error_code: 'ERR_OCR_INVALID_CHAR', message: `char detected at ${position}` },
+          JSON.stringify(ocr),
+        );
+      }
+    });
+
+    it('blank is not mistaken for a zero', () => {
+      assert.equal(validate('1203470').valid, true);
+      assert.equal(validate('12 3470').error_code, 'ERR_OCR_INVALID_CHAR');
+      assert.equal(validate('120347 ').error_code, 'ERR_OCR_INVALID_CHAR');
     });
 
     it('throw TypeError if invalid from', () => {

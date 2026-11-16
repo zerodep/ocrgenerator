@@ -4,10 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-## v3.0.3 - 2026-09-28
+## v3.0.3 - 2026-11-14
 
+- fix bug where a 25 digit reference numbers was deemed invalid
+- honor passing `maxLength` to validate function
 - fix readme typos and add table of contents
 - include CHANGELOG.md in pack
+- drop node 20 build due to ESM dev deps
+- potentially breaking since whitespace, e.g. blank or newline, is no longer treated as zero when generating ocr
 
 ## v3.0.2 - 2026-09-15
 
@@ -21,6 +25,7 @@ All notable changes to this project will be documented in this file.
 
 - use builtin `String.prototype.padStart` to pad zeros to generated ocr reference
 - minor optimization in calculation of modulus length
+- drop node 18 build
 
 ## v2.0.1 - 2025-11-13
 

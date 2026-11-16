@@ -10,7 +10,8 @@
   const DOUBLED = [0, 2, 4, 6, 8, 1, 3, 5, 7, 9];
 
   /**
-   * @enum {string} ErrorCodes Validation error codes
+   * Validation error codes
+   * @enum {string}
    */
   const ErrorCodes = {
     OutOfRange: 'ERR_OCR_OUT_OF_RANGE',
@@ -19,15 +20,16 @@
 
   /**
    * Generate invoice number with length control and checksum.
-   * @param {string | number} from
-   * @param {import('types').FixedOptions} [options]
+   * @param {string | number} from Generate from input
+   * @param {import('types').FixedOptions} [options] Generate options
    * @returns {GenerateResult}
+   * @throws {TypeError} If input is neither string nor number, or if minLength is above maxLength
    */
   function generate(from, { fixedLength, minLength = MIN_LENGTH, maxLength = MAX_LENGTH } = {}) {
     if (typeof from === 'number') from = from.toString();
     else if (typeof from !== 'string') throw new TypeError('input must be a string or number');
 
-    if (minLength > maxLength) throw new TypeError('minLength aught to be above maxLength');
+    if (minLength > maxLength) throw new TypeError('minLength must not be above maxLength');
     let { sum, length, numbers } = calculateChecksumReversed(from, { fixedLength, maxLength });
 
     length += 2;
@@ -53,7 +55,7 @@
 
   /**
    * Same as generate without options
-   * @param {string | number} from
+   * @param {string | number} from Generate from input
    * @returns Reference number
    */
   function soft(from) {
@@ -71,7 +73,7 @@
 
   /**
    * Generate with fixed length
-   * Padded with preceeding zeros if too short and capped from left if too long
+   * Padded with preceding zeros if too short and capped from left if too long
    * @param {string | number} from Generate from input
    * @param {number} fixedLength OCR reference number length
    * @returns Reference number
@@ -91,21 +93,14 @@
     else if (typeof ocr !== 'string') throw new TypeError('input must be a string or number');
 
     const len = ocr.length;
-    const currentControl = Number(ocr[len - 1]);
-    if (isNaN(currentControl)) return { valid: false, error_code: ErrorCodes.InvalidChar, message: `char detected at ${len - 1}` };
+    const currentControl = digitAt(ocr, len - 1);
+    if (currentControl < 0) return { valid: false, error_code: ErrorCodes.InvalidChar, message: `char detected at ${len - 1}` };
 
     const from = ocr.substring(0, len - 1);
-    const { sum, error_code, message } = calculateChecksumReversed(from, { validation: true });
+    const { sum, error_code, message } = calculateChecksumReversed(from, { validation: true, minLength, maxLength });
 
     if (error_code) return { valid: false, error_code, message };
 
-    if (len > maxLength) {
-      return {
-        valid: false,
-        error_code: ErrorCodes.OutOfRange,
-        message: `OCR reference too long must be between ${minLength} and ${maxLength}`,
-      };
-    }
     if (len < minLength) {
       return {
         valid: false,
@@ -121,7 +116,7 @@
 
   /**
    * Validate against soft algorithm
-   * - Invalid control digit is accepted
+   * - Invalid control digit is accepted by the bank but still returns false
    * @param {string | number} ocr OCR reference number
    * @returns Control digit is valid
    */
@@ -157,11 +152,11 @@
   /**
    * Validate against fixed length algorithm
    * - Invalid control digit is unacceptable
-   * - Invalid length control digit is unacceptable
+   * - Length other than the agreed lengths is unacceptable
    * @param {string | number} ocr OCR reference number
-   * @param {number} length1 Check length
-   * @param {number} [length2] Optional alternative length
-   * @returns Control digit and length control are valid
+   * @param {number} length1 Agreed length
+   * @param {number} [length2] Optional alternative agreed length
+   * @returns Control digit is valid and length matches an agreed length
    */
   function validateFixedLength(ocr, length1, length2) {
     if (typeof ocr === 'number') ocr = ocr.toString();
@@ -178,30 +173,35 @@
 
   /**
    * Calculate checksum
-   * @param {string} from Input
-   * @param {import('types').CalculateOptions} [options]
+   * @param {string | number} from Input
+   * @param {import('types').CalculateOptions} [options] Calculate options
    * @returns {Partial<ChecksumResult>}
+   * @throws {TypeError} If input is neither string nor number
    */
-  function calculateChecksumReversed(from, { fixedLength, maxLength = MAX_LENGTH, validation } = {}) {
+  function calculateChecksumReversed(from, { fixedLength, minLength = MIN_LENGTH, maxLength = MAX_LENGTH, validation } = {}) {
+    if (typeof from === 'number') from = from.toString();
+    else if (typeof from !== 'string') throw new TypeError('input must be a string or number');
+
     let sum = 0;
     let numbers = '';
     let length = 0;
     let position = validation ? -1 : 0;
+    const pendingDigits = validation ? 1 : 2;
 
     for (let i = from.length - 1; i >= 0; --i) {
-      const c = Number(from[i]);
-      if (isNaN(c)) {
+      const c = digitAt(from, i);
+      if (c < 0) {
         if (validation) {
           return { error_code: ErrorCodes.InvalidChar, message: `char detected at ${i}` };
         }
         continue;
       }
       if (fixedLength && length + 2 === fixedLength) break;
-      if (length + 3 > maxLength) {
+      if (length + pendingDigits >= maxLength) {
         if (validation) {
           return {
             error_code: ErrorCodes.OutOfRange,
-            message: `OCR reference too long must be between ${MIN_LENGTH} and ${maxLength}`,
+            message: `OCR reference too long must be between ${minLength} and ${maxLength}`,
           };
         }
         break;
@@ -213,6 +213,16 @@
       sum += sumDigits(position, c);
     }
     return { numbers, sum, length };
+  }
+
+  /**
+   * @param {string} str
+   * @param {number} index
+   * @returns {number} Digit at index, -1 if anything but a digit
+   */
+  function digitAt(str, index) {
+    const digit = str.charCodeAt(index) - 48;
+    return digit >= 0 && digit <= 9 ? digit : -1;
   }
 
   /**
@@ -233,9 +243,9 @@
 
   /**
    * @typedef {object} ChecksumResult
-   * @property {string} numbers Reference number
+   * @property {string} numbers Digits of the input
    * @property {number} sum Reversed checksum
-   * @property {number} length Reference number length, including control digit
+   * @property {number} length Number of digits
    * @property {ErrorCodes} [error_code] Occasional error code
    * @property {string} [message] Error message associated with error code
    */
@@ -245,7 +255,7 @@
    * @property {string} numbers Reference number
    * @property {number} sum Reversed checksum
    * @property {number} lengthControl Length control digit
-   * @property {number} control Reversed checksum
+   * @property {number} control Control digit
    * @property {number} length Reference number length, including control digit
    */
 

@@ -10,6 +10,7 @@ expectType<boolean>(ocregenerator.validateFixedLength('1234', 4));
 expectType<boolean>(ocregenerator.validateVariableLength('1234'));
 expectType<boolean>(ocregenerator.validateSoft('1234'));
 expectType<boolean>(ocregenerator.validateHard('1234'));
+expectType<Partial<ChecksumResult>>(ocregenerator.calculateChecksumReversed(1234));
 expectType<Partial<ChecksumResult>>(
   ocregenerator.calculateChecksumReversed('1234', {
     validation: true,

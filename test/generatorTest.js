@@ -161,6 +161,17 @@ describe('generate', () => {
       assert.equal(generate('abc').numbers, '26');
     });
 
+    it('ignores blank, tab, and newline', () => {
+      assert.equal(generate('1234').numbers, '123463');
+      for (const from of ['12 34', '12\n34', '12\r\n34', '\t1234', '1234 \n', '12\u00a034']) {
+        assert.equal(generate(from).numbers, '123463', JSON.stringify(from));
+      }
+    });
+
+    it('returns 26 if only blanks and newlines', () => {
+      assert.equal(generate(' \n\t').numbers, '26');
+    });
+
     it('pads with zeros if nothing could be used and minLength is above 2', () => {
       assert.equal(generate('abc', { minLength: 3 }).numbers, '034');
     });

@@ -64,7 +64,7 @@
     "mocha": "^12.0.0",
     "prettier": "^3.5.3",
     "rollup": "^4.14.3",
-    "texample": "^1.0.0",
+    "texample": "^2.0.0",
     "tsd": "^0.33.0"
   },
   "files": [

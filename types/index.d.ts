@@ -1,10 +1,14 @@
 declare module 'ocrgenerator' {
 	/**
 	 * Generate invoice number with length control and checksum.
-	 * */
+	 * @param from Generate from input
+	 * @param options Generate options
+	 * @throws {TypeError} If input is neither string nor number, or if minLength is above maxLength
+	 */
 	export function generate(from: string | number, { fixedLength, minLength, maxLength }?: FixedOptions): GenerateResult;
 	/**
 	 * Same as generate without options
+	 * @param from Generate from input
 	 * @returns Reference number
 	 */
 	export function soft(from: string | number): string;
@@ -16,7 +20,7 @@ declare module 'ocrgenerator' {
 	export function hard(from: string | number): string;
 	/**
 	 * Generate with fixed length
-	 * Padded with preceeding zeros if too short and capped from left if too long
+	 * Padded with preceding zeros if too short and capped from left if too long
 	 * @param from Generate from input
 	 * @param fixedLength OCR reference number length
 	 * @returns Reference number
@@ -31,7 +35,7 @@ declare module 'ocrgenerator' {
 	export function validate(ocr: string | number, { minLength, maxLength }?: LengthOptions): ValidateResult;
 	/**
 	 * Validate against soft algorithm
-	 * - Invalid control digit is accepted
+	 * - Invalid control digit is accepted by the bank but still returns false
 	 * @param ocr OCR reference number
 	 * @returns Control digit is valid
 	 */
@@ -54,22 +58,24 @@ declare module 'ocrgenerator' {
 	/**
 	 * Validate against fixed length algorithm
 	 * - Invalid control digit is unacceptable
-	 * - Invalid length control digit is unacceptable
+	 * - Length other than the agreed lengths is unacceptable
 	 * @param ocr OCR reference number
-	 * @param length1 Check length
-	 * @param length2 Optional alternative length
-	 * @returns Control digit and length control are valid
+	 * @param length1 Agreed length
+	 * @param length2 Optional alternative agreed length
+	 * @returns Control digit is valid and length matches an agreed length
 	 */
 	export function validateFixedLength(ocr: string | number, length1: number, length2?: number): boolean;
 	/**
 	 * Calculate checksum
 	 * @param from Input
-	 * */
-	export function calculateChecksumReversed(from: string, { fixedLength, maxLength, validation }?: CalculateOptions): Partial<ChecksumResult>;
+	 * @param options Calculate options
+	 * @throws {TypeError} If input is neither string nor number
+	 */
+	export function calculateChecksumReversed(from: string | number, { fixedLength, minLength, maxLength, validation }?: CalculateOptions): Partial<ChecksumResult>;
 	export const MIN_LENGTH: 2;
 	export const MAX_LENGTH: 25;
 	/**
-	 * ErrorCodes Validation error codes
+	 * Validation error codes
 	 */
 	export type ErrorCodes = string;
 	export namespace ErrorCodes {
@@ -78,7 +84,7 @@ declare module 'ocrgenerator' {
 	}
 	export type ChecksumResult = {
 		/**
-		 * Reference number
+		 * Digits of the input
 		 */
 		numbers: string;
 		/**
@@ -86,7 +92,7 @@ declare module 'ocrgenerator' {
 		 */
 		sum: number;
 		/**
-		 * Reference number length, including control digit
+		 * Number of digits
 		 */
 		length: number;
 		/**
@@ -112,7 +118,7 @@ declare module 'ocrgenerator' {
 		 */
 		lengthControl: number;
 		/**
-		 * Reversed checksum
+		 * Control digit
 		 */
 		control: number;
 		/**
@@ -157,9 +163,9 @@ declare module 'ocrgenerator' {
   interface CalculateOptions extends FixedOptions {
 	/**
 	 * Validation in progress
-	 * - true will disregard control digit when calculating checksum
-	 *   but return error if encountering invalid characters or length control
-	 * - false will ignore invalid characters and length control
+	 * - true expects the reference number without its control digit
+	 *   and returns error on invalid characters or if too long
+	 * - false ignores invalid characters and caps from left if too long
 	 */
 	validation?: boolean;
   }

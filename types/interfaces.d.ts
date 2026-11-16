@@ -13,9 +13,9 @@ export interface FixedOptions extends LengthOptions {
 export interface CalculateOptions extends FixedOptions {
   /**
    * Validation in progress
-   * - true will disregard control digit when calculating checksum
-   *   but return error if encountering invalid characters or length control
-   * - false will ignore invalid characters and length control
+   * - true expects the reference number without its control digit
+   *   and returns error on invalid characters or if too long
+   * - false ignores invalid characters and caps from left if too long
    */
   validation?: boolean;
 }
